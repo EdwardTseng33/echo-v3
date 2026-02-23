@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>ECHO 回聲 | 親子冒險任務</title>
+    <meta name="description" content="ECHO 回聲 — 用 RPG 冒險方式，讓孩子愛上完成任務！親子互動遊戲化任務平台。">
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/regular/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/bold/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/fill/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Background Removal Utility -->
+    <script src="https://unpkg.com/@imgly/background-removal@1.4.3/dist/browser/background-removal.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <div id="app">
+        <!-- ===== AUTH SCREEN ===== -->
+        <div class="screen" id="screen-auth">
+            <div class="auth-screen">
+                <div class="auth-logo">⚔️</div>
+                <h1 class="auth-title">ECHO 回聲</h1>
+                <p class="auth-subtitle">親子冒險任務平台 — 讓成長變成一場大冒險！</p>
+                <div class="auth-form">
+                    <input id="auth-name" placeholder="✏️ 輸入冒險者名稱" autocomplete="off">
+                    <div style="display:flex; gap:8px;">
+                        <input id="auth-age" type="number" placeholder="🎂 年齡" min="1" max="100" style="flex:1">
+                        <input id="auth-loc" placeholder="📍 居住縣市" style="flex:2">
+                    </div>
+
+                    <button class="btn btn-primary btn-block" onclick="doLogin()">
+                        <i class="ph-bold ph-sign-in"></i> 開始冒險！
+                    </button>
+                    <div class="auth-divider">或</div>
+                    <button class="btn btn-google btn-block" onclick="doGoogleLogin()">
+                        <svg viewBox="0 0 48 48" width="20" height="20">
+                            <path fill="#EA4335"
+                                d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+                            <path fill="#4285F4"
+                                d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+                            <path fill="#FBBC05"
+                                d="M10.53 28.59A14.5 14.5 0 019.5 24c0-1.59.28-3.14.76-4.59l-7.98-6.19A23.9 23.9 0 000 24c0 3.77.9 7.34 2.44 10.51l8.09-5.92z" />
+                            <path fill="#34A853"
+                                d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-8.09 5.92C6.51 42.62 14.62 48 24 48z" />
+                        </svg>
+                        使用 Google 登入
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== CHARACTER SELECT ===== -->
+        <div class="screen hidden" id="screen-charselect">
+            <div class="topbar">
+                <h1>🎭 選擇你的角色</h1>
+                <div></div>
+            </div>
+            <div style="padding:16px;text-align:center">
+                <p style="color:var(--text2);font-size:13px;font-weight:700;margin-bottom:16px">選擇一位夥伴開始你的冒險旅程！</p>
+                <div class="char-grid" id="char-grid"></div>
+                <button class="btn btn-primary btn-block mt-4" onclick="confirmCharacter()">
+                    <i class="ph-bold ph-check-circle"></i> 確認選擇！
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== HOME (TASK WALL) ===== -->
+        <div class="screen hidden" id="screen-home">
+            <div class="topbar" style="border-bottom:none; padding-bottom: 0;">
+                <h1
+                    style="font-size: 24px; font-weight: 900; background: linear-gradient(45deg, #FFD700, #FF8C00); background-clip: text; -webkit-background-clip: text; color: transparent;">
+                    ✨ ECHO 回聲</h1>
+                <div class="topbar-right">
+                </div>
+            </div>
+            <div class="home-profile-card">
+                <div class="home-avatar" id="hud-char-icon">🧙</div>
+                <div class="home-profile-info">
+                    <div class="home-greeting">哈囉，<span id="hud-charname">冒險者</span>！</div>
+                    <div class="home-stats-row">
+                        <div class="home-stat-badge level"><i class="ph-fill ph-star"></i> Lv.<span
+                                id="hud-level">1</span></div>
+                        <div class="home-stat-badge points"><i class="ph-fill ph-coin"></i> <span
+                                id="hud-points">0</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="xp-section">
+                <div class="xp-header"><span id="xp-current">0 / 50 XP</span><span class="xp-lvl" id="xp-next">→
+                        Lv.2</span></div>
+                <div class="xp-track">
+                    <div class="xp-fill" id="xp-fill" style="width:0%"></div>
+                </div>
+            </div>
+
+            <!-- Daily Battle Banner -->
+            <div style="padding:0 16px 8px">
+                <div class="battle-banner" id="battle-banner" onclick="startDailyBattle()">
+                    <div class="battle-banner-bg"></div>
+                    <div class="battle-banner-content">
+                        <div class="battle-left">
+                            <div class="battle-label">⚔ 每日冒險挑戰</div>
+                            <div class="battle-monster-name" id="daily-monster-name">未知怪物</div>
+                            <div class="battle-hint" id="daily-battle-hint">點擊開始戰鬥！</div>
+                        </div>
+                        <div class="battle-monster-emoji" id="daily-monster-emoji">👹</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lucky Wheel Banner -->
+            <div style="padding:0 16px 8px">
+                <div class="card" style="cursor:pointer;border-color:rgba(255,215,0,.3)" onclick="openLuckyWheel()">
+                    <div class="flex items-center gap-2">
+                        <span style="font-size:32px;animation:charFloat 2s ease-in-out infinite">🎡</span>
+                        <div style="flex:1">
+                            <div style="font-weight:900;font-size:14px;color:var(--primary)">每日幸運轉盤</div>
+                            <div style="font-size:11px;color:var(--text2);font-weight:700" id="wheel-hint">今天還沒轉！免費一次
+                            </div>
+                        </div>
+                        <span style="font-size:18px">→</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <h2>任務看板</h2>
+                <a href="#" onclick="showScreen('screen-create')">+ 發布任務</a>
+            </div>
+            <div class="section-pad" id="task-feed"></div>
+        </div>
+
+        <!-- ===== MY TASKS ===== -->
+        <div class="screen hidden" id="screen-mytasks">
+            <div class="topbar">
+                <h1>我的任務</h1>
+                <div></div>
+            </div>
+            <div class="section-header">
+                <h2>進行中</h2>
+                <div></div>
+            </div>
+            <div class="section-pad" id="mytasks-active"></div>
+            <div class="section-header">
+                <h2>已完成</h2>
+                <div></div>
+            </div>
+            <div class="section-pad" id="mytasks-done"></div>
+        </div>
+
+        <!-- ===== TASK DETAIL ===== -->
+        <div class="screen hidden" id="screen-detail">
+            <div class="topbar">
+                <button class="icon-btn" onclick="goBackFromDetail()"><i class="ph-bold ph-arrow-left"></i></button>
+                <span id="det-badge" class="status-badge status-published">開放中</span>
+            </div>
+            <div class="detail-header">
+                <div id="det-type" class="task-type">任務</div>
+                <h2 id="det-title">任務名稱</h2>
+                <div class="flex gap-2 mt-2" style="font-size:12px;color:var(--text2);font-weight:700">
+                    <span><i class="ph-fill ph-user-circle"></i> <span id="det-creator">發布者</span></span>
+                    <span><i class="ph-fill ph-clock"></i> <span id="det-time">剛剛</span></span>
+                </div>
+            </div>
+            <div class="detail-body">
+                <p id="det-desc">任務說明</p>
+                <div id="det-meta-extra"></div>
+                <div class="detail-rewards">
+                    <div class="reward-chip"><i class="ph-fill ph-lightning" style="color:var(--primary)"></i> <span
+                            class="val" id="det-xp">50</span> XP</div>
+                    <div class="reward-chip"><span style="color:var(--primary)">💰</span> <span class="val"
+                            id="det-pts">10</span> 點</div>
+                </div>
+                <div id="det-checklist"></div>
+                <div id="echo-section" style="display:none">
+                    <h3 style="font-size:14px;font-weight:900;margin-top:16px">🔊 回聲鼓勵</h3>
+                    <div id="echo-container"></div>
+                </div>
+                <div id="record-section" style="display:none">
+                    <div class="record-area">
+                        <h3 style="font-size:14px;font-weight:900;margin-bottom:12px">🎤 錄製回聲鼓勵</h3>
+                        <button class="record-btn" id="record-btn" onclick="toggleRecording()"><i id="rec-icon"
+                                class="ph-fill ph-microphone"></i></button>
+                        <div class="record-timer" id="rec-timer">00:00</div>
+                        <div class="record-hint" id="rec-hint">點擊開始錄音</div>
+                    </div>
+                </div>
+            </div>
+            <div class="detail-actions" id="detail-actions"></div>
+        </div>
+
+        <!-- ===== CREATE TASK ===== -->
+        <div class="screen hidden" id="screen-create" style="background: var(--bg);">
+            <div class="topbar">
+                <button class="icon-btn" onclick="showScreen('screen-home')"><i
+                        class="ph-bold ph-arrow-left"></i></button>
+                <h1>發布任務</h1>
+                <div></div>
+            </div>
+
+            <div class="section-pad mt-2">
+                <!-- AI Generator UX Block -->
+                <div class="card"
+                    style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(74, 26, 138, 0.15)); border: 1px solid rgba(139, 92, 246, 0.4); padding: 20px; text-align: center; margin-bottom: 24px;">
+                    <div style="font-size: 32px; margin-bottom: 8px; animation: charFloat 3s ease-in-out infinite;">🤖
+                    </div>
+                    <div style="font-weight: 800; font-size: 16px; margin-bottom: 4px; color: var(--primary);">沒靈感嗎？交給
+                        AI 吧！</div>
+                    <div style="font-size: 13px; color: var(--text2); margin-bottom: 16px;">一鍵自動生成符合情境的創意挑戰。</div>
+                    <button class="btn btn-block"
+                        style="background: linear-gradient(135deg, #8B5CF6, #E040FB); color: white; border-radius: 100px; font-weight: 900; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4); font-size: 15px;"
+                        onclick="aiGenerateTask()">
+                        <i class="ph-bold ph-magic-wand"></i> ✨ 智慧生成任務
+                    </button>
+                </div>
+
+                <div
+                    style="font-size: 13px; font-weight: 900; color: var(--text2); margin-bottom: 12px; padding-left: 4px;">
+                    手動填寫任務資訊</div>
+
+                <div class="card" style="padding: 16px;">
+                    <div class="form-group">
+                        <label>任務名稱</label>
+                        <input id="c-title" placeholder="例：整理書桌大冒險" style="font-size: 15px; font-weight: 700;">
+                    </div>
+                    <div class="form-group mb-0">
+                        <label>任務說明</label>
+                        <textarea id="c-desc" placeholder="描述任務內容…" rows="3"></textarea>
+                    </div>
+                </div>
+
+                <div class="card mt-3" style="padding: 16px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                        <div class="form-group mb-0">
+                            <label>任務類型</label>
+                            <select id="c-type">
+                                <option value="CHORE">🧹 家事小幫手</option>
+                                <option value="LEARNING">📚 學習挑戰</option>
+                                <option value="ADVENTURE">🌳 戶外探險</option>
+                                <option value="KINDNESS">💖 善行任務</option>
+                                <option value="CREATIVE">🎨 創意發想</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-0">
+                            <label>難度設定</label>
+                            <select id="c-diff">
+                                <option value="EASY">⭐ 簡單 (30 XP)</option>
+                                <option value="MEDIUM" selected>⭐⭐ 普通 (50 XP)</option>
+                                <option value="HARD">⭐⭐⭐ 困難 (80 XP)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div class="form-group mb-0"><label>截止時間</label><input type="datetime-local" id="c-deadline">
+                        </div>
+                        <div class="form-group mb-0"><label>地點</label><input id="c-location" placeholder="例：書房"></div>
+                    </div>
+
+                    <div class="form-group mt-3 mb-0">
+                        <label>任務步驟（選填）</label>
+                        <div id="checklist-items" style="margin-bottom: 8px;"></div>
+                        <div class="flex gap-2">
+                            <input id="checklist-input" placeholder="新增步驟…" style="flex:1">
+                            <button class="btn btn-sm"
+                                style="background: rgba(255,255,255,0.1); border-radius: 8px; color: var(--text);"
+                                onclick="addChecklistItem()"><i class="ph-bold ph-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary btn-block mt-4"
+                    style="padding: 16px; font-size: 16px; border-radius: 16px;" onclick="publishTask()">
+                    <i class="ph-bold ph-paper-plane-tilt"></i> 立即發布！
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== REWARDS ===== -->
+        <div class="screen hidden" id="screen-rewards">
+            <div class="topbar">
+                <h1>獎勵商城</h1>
+                <div class="topbar-right">
+                </div>
+            </div>
+
+            <div style="padding: 16px 20px 0;">
+                <div
+                    style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 159, 67, 0.15)); border: 1px solid rgba(255, 215, 0, 0.4); border-radius: 20px; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 8px 32px rgba(255,215,0,0.1); position:relative; overflow:hidden;">
+                    <div style="position:relative; z-index:1;">
+                        <div
+                            style="color:var(--text); font-size:14px; font-weight:800; margin-bottom:4px; opacity:0.9;">
+                            我的回聲點數
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span style="font-size:28px; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3));">💰</span>
+                            <span id="shop-bal-hero"
+                                style="font-size:36px; font-weight:900; color:var(--primary); font-family:monospace; line-height:1; letter-spacing:1px; text-shadow:0 2px 4px rgba(0,0,0,0.5);">0</span>
+                        </div>
+                    </div>
+                    <div
+                        style="position:absolute; right:-20px; top:-20px; font-size:100px; opacity:0.1; transform:rotate(15deg); pointer-events:none;">
+                        💰</div>
+                </div>
+            </div>
+
+            <div class="section-header" style="padding: 24px 16px 8px;">
+                <h2>精選大獎</h2>
+                <div></div>
+            </div>
+            <div id="rewards-featured" style="padding: 0 16px; margin-bottom:16px;"></div>
+
+            <div class="section-header"
+                style="padding: 12px 16px 12px; display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="margin: 0;">日常兌換</h2>
+                <button class="btn btn-sm"
+                    style="padding:6px 16px;font-size:12px;font-weight:900;background:rgba(255,159,67,0.15);color:var(--orange);border:1px solid rgba(255,159,67,0.3);border-radius:20px;cursor:pointer; display:flex; align-items:center; gap:4px;"
+                    onclick="showScreen('screen-custom-reward')">
+                    <i class="ph-bold ph-plus"></i> 新增
+                </button>
+            </div>
+            <div class="section-pad" id="rewards-list"
+                style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; padding-top:0;">
+            </div>
+        </div>
+
+        <!-- ===== CUSTOM REWARD CREATION ==== -->
+        <div class="screen hidden" id="screen-custom-reward">
+            <div class="topbar">
+                <button class="icon-btn" onclick="showScreen('screen-rewards')"><i
+                        class="ph-bold ph-arrow-left"></i></button>
+                <h1>新增自訂獎勵</h1>
+                <div></div>
+            </div>
+            <div class="section-pad">
+                <div class="card">
+                    <div class="form-group"><label>獎勵名稱</label><input id="rw-title" placeholder="例：去遊樂園"></div>
+                    <div class="form-group"><label>說明</label><input id="rw-desc" placeholder="例：週末全家去遊樂園"></div>
+                    <div class="flex gap-2">
+                        <div class="form-group" style="flex:1"><label>圖示</label><input id="rw-icon" placeholder="🎁">
+                        </div>
+                        <div class="form-group" style="flex:1"><label>點數</label><input id="rw-cost" type="number"
+                                placeholder="50"></div>
+                    </div>
+                    <button class="btn btn-primary btn-block" onclick="createCustomReward()">
+                        <i class="ph-bold ph-plus-circle"></i> 確認新增
+                    </button>
+                    <button class="btn btn-secondary btn-block mt-2" onclick="showScreen('screen-rewards')">取消</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== CHARACTER PROFILE ===== -->
+        <div class="screen hidden" id="screen-character">
+            <div class="topbar">
+                <h1>角色</h1>
+                <div class="topbar-right">
+                    <button class="icon-btn" onclick="doLogout()" title="登出"><i
+                            class="ph-bold ph-sign-out"></i></button>
+                </div>
+            </div>
+            <div class="char-profile">
+                <div class="char-profile-avatar" id="prof-avatar-ring">
+                    <span class="char-big" id="prof-char">🧙</span>
+                    <div class="sparkle-container">
+                        <div class="sparkle"></div>
+                        <div class="sparkle"></div>
+                        <div class="sparkle"></div>
+                        <div class="sparkle"></div>
+                        <div class="sparkle"></div>
+                    </div>
+                </div>
+                <div class="char-title" id="prof-name">冒險者</div>
+                <div class="char-subtitle" id="prof-classname">見習冒險者</div>
+                <div class="char-class-badge" id="prof-class-badge">⭐ Lv.1 見習冒險者</div>
+            </div>
+            <div class="profile-stats">
+                <div class="p-stat"><span class="p-val" id="p-level">1</span><span class="p-label">等級</span></div>
+                <div class="p-stat"><span class="p-val" id="p-xp">0</span><span class="p-label">經驗</span></div>
+                <div class="p-stat"><span class="p-val" id="p-pts">0</span><span class="p-label">點數</span></div>
+                <div class="p-stat"><span class="p-val" id="p-tasks">0</span><span class="p-label">完成</span></div>
+            </div>
+            <div class="menu-list">
+                <div class="menu-item" onclick="showScreen('screen-dashboard')">
+                    <i class="ph-fill ph-chart-bar"></i> 任務回顧
+                    <span class="menu-right">📊 統計 <i class="ph ph-caret-right"></i></span>
+                </div>
+                <div class="menu-item" onclick="showScreen('screen-subscription')">
+                    <i class="ph-fill ph-crown"></i> 我的訂閱
+                    <span class="menu-right" id="menu-sub-label">免費版 <i class="ph ph-caret-right"></i></span>
+                </div>
+            </div>
+            <div class="section-header">
+                <h2>成就牆</h2>
+                <div></div>
+            </div>
+            <div class="ach-grid" id="ach-grid"></div>
+            <div class="section-pad">
+                <!-- Compact Redemption Code -->
+                <div
+                    style="display:flex; align-items:center; gap:8px; margin-bottom:24px; background:rgba(255,255,255,0.05); padding:6px 12px; border-radius:12px; border:1px solid rgba(255,215,0,0.15);">
+                    <div style="font-size:16px;">🎁</div>
+                    <input type="text" id="redeem-code-input"
+                        style="flex:1; background:transparent; border:none; color:var(--text); font-size:14px; outline:none; padding:4px 0;"
+                        placeholder="輸入兌換碼...">
+                    <button class="btn btn-primary"
+                        style="padding:6px 14px; font-size:13px; min-height:auto; border-radius:8px;"
+                        onclick="processRedeemCode()">兌換</button>
+                </div>
+
+                <!-- Footer Links & App Info -->
+                <div style="text-align:center; padding:16px 0;">
+                    <div style="display:flex; justify-content:center; gap:16px; margin-bottom:16px;">
+                        <a href="#"
+                            style="color:var(--text2); font-size:12px; font-weight:700; text-decoration:none;">會員使用條款</a>
+                        <span style="color:rgba(255,255,255,0.2)">|</span>
+                        <a href="#"
+                            style="color:var(--text2); font-size:12px; font-weight:700; text-decoration:none;">隱私政策</a>
+                        <span style="color:rgba(255,255,255,0.2)">|</span>
+                        <a href="#"
+                            style="color:var(--text2); font-size:12px; font-weight:700; text-decoration:none;">與我們聯繫</a>
+                    </div>
+                    <div style="color:var(--text3); font-size:11px;">ECHO 回聲 v1.0.0 (Build 202602)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== SUBSCRIPTION ===== -->
+        <div class="screen hidden" id="screen-subscription">
+            <div class="topbar">
+                <button class="icon-btn" onclick="showScreen('screen-character')"><i
+                        class="ph-bold ph-arrow-left"></i></button>
+                <h1>訂閱方案</h1>
+                <div></div>
+            </div>
+            <div class="sub-card">
+                <div class="sub-badge-big" id="sub-title-icon">👑</div>
+                <h3 id="sub-title">免費冒險者</h3>
+                <p class="text-muted text-sm" id="sub-desc">可發布 1 次任務體驗</p>
+            </div>
+            <div style="padding:0 24px">
+                <div class="paywall-price"><span class="price">$59</span><span class="period">/月</span></div>
+                <ul class="paywall-features">
+                    <li><i class="ph-fill ph-check-circle"></i> 無限任務發布</li>
+                    <li><i class="ph-fill ph-check-circle"></i> 解鎖全部成就系統</li>
+                    <li><i class="ph-fill ph-check-circle"></i> 獨家角色進化外觀</li>
+                    <li><i class="ph-fill ph-check-circle"></i> 專屬獎勵道具</li>
+                    <li><i class="ph-fill ph-check-circle"></i> 家庭多帳號管理</li>
+                    <li><i class="ph-fill ph-check-circle"></i> 200 回聲點數禮包</li>
+                </ul>
+                <button class="btn btn-primary btn-block" id="sub-action-btn" onclick="activateSubscription()">
+                    👑 立即訂閱 $59/月
+                </button>
+                <button class="btn btn-secondary btn-block mt-2" onclick="showScreen('screen-character')">稍後再說</button>
+            </div>
+        </div>
+
+        <!-- ===== TASK DASHBOARD ===== -->
+        <div class="screen hidden" id="screen-dashboard">
+            <div class="topbar">
+                <button class="icon-btn" onclick="showScreen('screen-character')"><i
+                        class="ph-bold ph-arrow-left"></i></button>
+                <h1>任務回顧</h1>
+                <div></div>
+            </div>
+            <div style="padding:8px 16px">
+                <div class="dash-tabs" id="dash-tabs">
+                    <button class="dash-tab active" onclick="switchDashPeriod('week',this)">本週</button>
+                    <button class="dash-tab" onclick="switchDashPeriod('month',this)">本月</button>
+                    <button class="dash-tab" onclick="switchDashPeriod('year',this)">本年</button>
+                    <button class="dash-tab" onclick="switchDashPeriod('all',this)">全部</button>
+                </div>
+            </div>
+            <div style="padding:0 16px">
+                <div class="dash-summary" id="dash-summary"></div>
+                <div class="section-header" style="padding:12px 0 8px">
+                    <h2>任務類型分佈</h2>
+                    <div></div>
+                </div>
+                <div id="dash-type-grid"></div>
+                <div class="section-header" style="padding:12px 0 8px">
+                    <h2>達成成就</h2>
+                    <div></div>
+                </div>
+                <div id="dash-achievements"></div>
+                <div class="section-header" style="padding:12px 0 8px">
+                    <h2>AI 冒險評語</h2>
+                    <div></div>
+                </div>
+                <div class="card" id="dash-ai-comment"
+                    style="border-color:rgba(255,215,0,.3);background:linear-gradient(135deg,rgba(255,215,0,.08),rgba(139,92,246,.08))">
+                    <div style="font-size:14px;font-weight:700;color:var(--text2);line-height:1.8" id="dash-ai-text">
+                        載入中…</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== BATTLE ARENA ===== -->
+        <div class="screen hidden" id="screen-battle">
+            <div class="topbar">
+                <button class="icon-btn" onclick="exitBattle()"><i class="ph-bold ph-arrow-left"></i></button>
+                <h1>⚔️ 冒險戰鬥</h1>
+                <div></div>
+            </div>
+            <div class="battle-arena">
+                <div class="battle-monster-area" id="monster-area">
+                    <div class="battle-monster-sprite" id="bm-sprite" style="position:relative">👹</div>
+                    <div class="battle-monster-info">
+                        <div class="battle-name" id="bm-name">怪物</div>
+                        <div class="battle-hp-bar">
+                            <div class="battle-hp-fill monster-hp" id="bm-hp" style="width:100%"></div>
+                        </div>
+                        <div class="battle-hp-text" id="bm-hp-text">HP: 100/100</div>
+                    </div>
+                </div>
+                <div class="battle-vs">⚔ VS</div>
+                <div class="battle-player-area" id="player-area">
+                    <div class="battle-player-sprite" id="bp-sprite" style="position:relative">⚔️</div>
+                    <div class="battle-player-info">
+                        <div class="battle-name" id="bp-name">冒險者</div>
+                        <div class="battle-hp-bar">
+                            <div class="battle-hp-fill player-hp" id="bp-hp" style="width:100%"></div>
+                        </div>
+                        <div class="battle-hp-text" id="bp-hp-text">HP: 100/100</div>
+                    </div>
+                </div>
+                <div class="battle-log" id="battle-log"></div>
+                <div class="battle-actions">
+                    <button class="btn btn-primary" id="btn-attack" onclick="battleAttack()">🗡 攻擊！</button>
+                    <button class="btn btn-magic" id="btn-skill" onclick="battleSkill()">⚡ 技能</button>
+                    <button class="btn btn-green" id="btn-heal" onclick="battleHeal()">♥ 治療</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== LUCKY WHEEL SCREEN ===== -->
+        <div class="screen hidden" id="screen-wheel">
+            <div class="topbar">
+                <button class="icon-btn" onclick="showScreen('screen-home')"><i
+                        class="ph-bold ph-arrow-left"></i></button>
+                <h1>🎡 幸運轉盤</h1>
+                <div></div>
+            </div>
+            <div class="wheel-container">
+                <p style="color:var(--text2);font-size:13px;font-weight:700;margin-bottom:16px">每天免費轉一次，贏取額外獎勵！</p>
+                <div class="wheel-wrapper">
+                    <div class="wheel-pointer">▼</div>
+                    <canvas id="wheel-canvas" width="280" height="280"></canvas>
+                </div>
+                <button class="btn btn-primary btn-block mt-4 wheel-spin-btn" id="wheel-spin-btn" onclick="spinWheel()">
+                    🎡 轉動轉盤！
+                </button>
+                <div id="wheel-result" style="margin-top:16px;font-size:16px;font-weight:900;color:var(--primary)">
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== PAYWALL MODAL ===== -->
+        <div class="modal-overlay" id="paywall-modal">
+            <div class="modal-sheet">
+                <div class="modal-handle"></div>
+                <div class="modal-title">👑 解鎖無限冒險</div>
+                <div class="modal-desc">訂閱 Pro 版，享受無限任務發布、專屬角色進化、和更多獎勵！</div>
+                <div class="paywall-price"><span class="price">$59</span><span class="period">/月</span></div>
+                <ul class="paywall-features">
+                    <li><i class="ph-fill ph-check-circle"></i> 無限任務發布</li>
+                    <li><i class="ph-fill ph-check-circle"></i> 解鎖全部成就</li>
+                    <li><i class="ph-fill ph-check-circle"></i> 獨家角色外觀</li>
+                    <li><i class="ph-fill ph-check-circle"></i> 200 點數禮包</li>
+                </ul>
+                <button class="btn btn-primary btn-block" onclick="activateSubscription()">👑 訂閱 $59/月</button>
+                <button class="btn btn-secondary btn-block mt-2" onclick="closePaywall()">暫時不用</button>
+            </div>
+        </div>
+
+        <!-- ===== TOAST + CELEBRATION ===== -->
+        <div class="toast" id="toast"><i class="ph-fill ph-star"></i><span id="toast-msg"></span></div>
+        <div class="celebration" id="celebration">
+            <div class="cel-icon" id="cel-icon">🎉</div>
+            <div class="cel-title" id="cel-title"></div>
+            <div class="cel-sub" id="cel-sub"></div>
+        </div>
+
+        <!-- ===== BOTTOM NAV ===== -->
+        <nav class="bottomnav" id="main-nav" style="display:none">
+            <button class="nav-btn active" onclick="nav('screen-home',this)">
+                <i class="ph-fill ph-sword"></i><span>任務</span>
+            </button>
+            <button class="nav-btn" onclick="nav('screen-mytasks',this)">
+                <i class="ph-fill ph-scroll"></i><span>進度</span>
+            </button>
+            <button class="nav-btn" onclick="nav('screen-rewards',this)">
+                <i class="ph-fill ph-gift"></i><span>寶庫</span>
+            </button>
+            <button class="nav-btn" onclick="nav('screen-character',this)">
+                <i class="ph-fill ph-shield-star"></i><span>角色</span>
+            </button>
+        </nav>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>
