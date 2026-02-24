@@ -3620,5 +3620,5 @@ select:focus {
 /* Unified coin icon color across all screens */
 .ph-bold.ph-coin,
 .ph-fill.ph-coin {
-    color: #F59E0B !important;
+    color: var(--primary) !important;
 }
