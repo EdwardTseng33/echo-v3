@@ -28,23 +28,51 @@
 
 <body>
     <div id="app">
-        <!-- ===== AUTH SCREEN ===== -->
+        <!-- ===== AUTH STEP 1: LOGIN PAGE ===== -->
         <div class="screen" id="screen-auth">
-            <div class="auth-screen">
-                <div class="auth-logo">⚔️</div>
-                <h1 class="auth-title">ECHO 回聲</h1>
-                <p class="auth-subtitle">親子冒險任務平台 — 讓成長變成一場大冒險！</p>
-                <div class="auth-form">
-                    <input id="auth-name" placeholder="✏️ 輸入冒險者名稱" autocomplete="off">
-                    <div style="display:flex; gap:8px;">
-                        <input id="auth-age" type="number" placeholder="🎂 年齡" min="1" max="100" style="flex:1">
-                        <input id="auth-loc" placeholder="📍 居住縣市" style="flex:2">
+            <div class="auth-screen auth-step1">
+                <!-- Floating particles -->
+                <div class="auth-particles">
+                    <div class="auth-particle"></div>
+                    <div class="auth-particle"></div>
+                    <div class="auth-particle"></div>
+                    <div class="auth-particle"></div>
+                    <div class="auth-particle"></div>
+                    <div class="auth-particle"></div>
+                </div>
+
+                <!-- Logo Section -->
+                <div class="auth-logo-section">
+                    <div class="auth-logo-ring">
+                        <div class="auth-logo-icon">⚔️</div>
+                    </div>
+                    <h1 class="auth-brand-title">ECHO <span class="auth-brand-sub">回聲</span></h1>
+                    <div class="auth-tagline">
+                        <span class="auth-tagline-line">讓成長，變成一場</span>
+                        <span class="auth-tagline-highlight">大冒險</span>
+                    </div>
+                    <p class="auth-tagline-desc">親子互動・任務挑戰・RPG 角色養成</p>
+                </div>
+
+                <!-- Login Form -->
+                <div class="auth-form-card">
+                    <div class="auth-form-inner">
+                        <div class="form-group">
+                            <label><i class="ph-bold ph-envelope-simple"></i> 帳號 Email</label>
+                            <input id="auth-email" type="email" placeholder="your@email.com" autocomplete="email">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="ph-bold ph-lock-key"></i> 密碼</label>
+                            <input id="auth-password" type="password" placeholder="輸入密碼"
+                                autocomplete="current-password">
+                        </div>
+                        <button class="btn btn-primary btn-block auth-login-btn" onclick="doLoginStep1()">
+                            <i class="ph-bold ph-sign-in"></i> 登入 / 註冊
+                        </button>
                     </div>
 
-                    <button class="btn btn-primary btn-block" onclick="doLogin()">
-                        <i class="ph-bold ph-sign-in"></i> 開始冒險！
-                    </button>
-                    <div class="auth-divider">或</div>
+                    <div class="auth-divider"><span>或</span></div>
+
                     <button class="btn btn-google btn-block" onclick="doGoogleLogin()">
                         <svg viewBox="0 0 48 48" width="20" height="20">
                             <path fill="#EA4335"
@@ -59,6 +87,54 @@
                         使用 Google 登入
                     </button>
                 </div>
+
+                <div class="auth-footer">
+                    <span>開始即代表同意</span>
+                    <a href="#">服務條款</a> 與 <a href="#">隱私政策</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== AUTH STEP 2: PROFILE SETUP ===== -->
+        <div class="screen hidden" id="screen-auth-step2">
+            <div class="auth-screen auth-step2">
+                <div class="auth-step2-header">
+                    <div style="font-size:40px;margin-bottom:4px;">🎮</div>
+                    <h2 class="auth-step2-title">建立你的冒險者檔案</h2>
+                    <p class="auth-step2-subtitle">告訴我們一些你的資訊，然後選擇你的角色！</p>
+                </div>
+
+                <div class="auth-step2-form">
+                    <div class="card" style="padding:16px;">
+                        <div class="form-group">
+                            <label>✏️ 冒險者名稱</label>
+                            <input id="auth-name" placeholder="輸入你的名字" autocomplete="name">
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                            <div class="form-group mb-0">
+                                <label>🎂 年齡</label>
+                                <input id="auth-age" type="number" placeholder="10" min="1" max="100">
+                            </div>
+                            <div class="form-group mb-0">
+                                <label>📍 居住地區</label>
+                                <input id="auth-loc" placeholder="台灣, 台北">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:16px;">
+                        <div
+                            style="font-size:14px;font-weight:900;color:var(--text);margin-bottom:12px;padding-left:4px;">
+                            🎭 選擇你的角色</div>
+                        <div class="char-grid" id="char-grid"></div>
+                    </div>
+
+                    <button class="btn btn-primary btn-block"
+                        style="margin-top:20px;padding:16px;font-size:16px;border-radius:16px;"
+                        onclick="completeRegistration()">
+                        <i class="ph-bold ph-rocket-launch"></i> 開始冒險！
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -69,14 +145,12 @@
                     <i class="ph-bold ph-arrow-left"></i>
                 </button>
                 <h1>帳號與安全</h1>
-                <div style="width:36px"></div> <!-- Spacer to center the title -->
+                <div style="width:36px"></div>
             </div>
-
             <div style="padding:16px;">
                 <p style="color:var(--text2);font-size:13px;font-weight:700;margin-top:8px;margin-bottom:16px">
                     管理您的冒險帳號設定</p>
                 <div class="menu-list">
-                    <!-- Username Edit -->
                     <div class="menu-item" onclick="editUsername()">
                         <div style="display:flex; align-items:center; gap:8px;">
                             <i class="ph-fill ph-user-circle" style="color:var(--primary)"></i> 冒險者名稱
@@ -85,8 +159,6 @@
                                 style="color:var(--text); font-weight:800;">冒險者</span> <i
                                 class="ph ph-caret-right"></i></span>
                     </div>
-
-                    <!-- Age Edit -->
                     <div class="menu-item" onclick="editAge()">
                         <div style="display:flex; align-items:center; gap:8px;">
                             <i class="ph-fill ph-cake" style="color:#F59E0B"></i> 年齡
@@ -95,8 +167,6 @@
                                 style="color:var(--text); font-weight:800;">10</span> 歲 <i
                                 class="ph ph-caret-right"></i></span>
                     </div>
-
-                    <!-- Email (Read Only) -->
                     <div class="menu-item" style="cursor:default; background:var(--bg);">
                         <div style="display:flex; align-items:center; gap:8px;">
                             <i class="ph-fill ph-envelope-simple" style="color:var(--text2)"></i> 帳號 Email
@@ -104,8 +174,6 @@
                         <span class="menu-right" id="acc-email"
                             style="font-size:13px; color:var(--text2); font-family:monospace;">user@echo.com</span>
                     </div>
-
-                    <!-- Google Bind Status -->
                     <div class="menu-item" onclick="toggleGoogleBind()">
                         <div style="display:flex; align-items:center; gap:8px;">
                             <i class="ph-fill ph-google-logo" style="color:#DB4437"></i> Google 綁定
@@ -113,16 +181,12 @@
                         <span class="menu-right" id="acc-google-status" style="color:var(--text3);">未綁定 <i
                                 class="ph ph-caret-right"></i></span>
                     </div>
-
-                    <!-- Change Password -->
                     <div class="menu-item" onclick="changePasswordFlow()">
                         <div style="display:flex; align-items:center; gap:8px;">
                             <i class="ph-fill ph-lock-key" style="color:#a855f7"></i> 變更密碼
                         </div>
                         <span class="menu-right">設定 <i class="ph ph-caret-right"></i></span>
                     </div>
-
-                    <!-- Location -->
                     <div class="menu-item" onclick="editLocation()">
                         <div style="display:flex; align-items:center; gap:8px;">
                             <i class="ph-fill ph-map-pin" style="color:#10b981"></i> 所在地
@@ -132,21 +196,6 @@
                                 class="ph ph-caret-right"></i></span>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- ===== CHARACTER SELECT ===== -->
-        <div class="screen hidden" id="screen-charselect">
-            <div class="topbar">
-                <h1>🎭 選擇你的角色</h1>
-                <div></div>
-            </div>
-            <div style="padding:16px;text-align:center">
-                <p style="color:var(--text2);font-size:13px;font-weight:700;margin-bottom:16px">選擇一位夥伴開始你的冒險旅程！</p>
-                <div class="char-grid" id="char-grid"></div>
-                <button class="btn btn-primary btn-block mt-4" onclick="confirmCharacter()">
-                    <i class="ph-bold ph-check-circle"></i> 確認選擇！
-                </button>
             </div>
         </div>
 

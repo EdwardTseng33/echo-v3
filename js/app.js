@@ -265,8 +265,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (globalData.activeId && me()) {
-        if (!me().character) { showScreen('screen-charselect'); renderCharGrid(); }
-        else enterApp();
+        if (!me().character) {
+            showScreen('screen-auth-step2');
+            renderCharGrid();
+        } else {
+            enterApp();
+        }
     }
     initWheel();
 });
@@ -284,22 +288,64 @@ function seedDemoTasks() {
 }
 
 // ===== AUTH =====
-function doLogin() {
+function doLoginStep1() {
+    const email = document.getElementById('auth-email').value.trim();
+    const password = document.getElementById('auth-password').value.trim();
+    if (!email) { showToast('請輸入 Email！'); return; }
+    if (!password) { showToast('請輸入密碼！'); return; }
+
+    // POC: check if existing account with this email
+    let accId = null;
+    for (const [id, acc] of Object.entries(globalData.accounts)) {
+        if (acc.email === email) { accId = id; break; }
+    }
+
+    if (accId) {
+        // Existing user — log in directly
+        globalData.activeId = accId;
+        saveGlobal();
+        if (!me().character) {
+            showScreen('screen-auth-step2');
+            renderCharGrid();
+            showToast('歡迎回來！請完成你的冒險者檔案');
+        } else {
+            enterApp();
+            showToast(`歡迎回來，${me().name}！`);
+        }
+    } else {
+        // New user — create account stub, go to step 2
+        accId = 'U' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+        globalData.accounts[accId] = defaultAccount('冒險者', 'child');
+        globalData.accounts[accId].email = email;
+        globalData.activeId = accId;
+        saveGlobal();
+        showScreen('screen-auth-step2');
+        renderCharGrid();
+        showToast('帳號已建立！請輸入你的資訊');
+    }
+}
+
+function completeRegistration() {
     const name = document.getElementById('auth-name').value.trim();
-    const role = 'child';
     const age = parseInt(document.getElementById('auth-age').value) || 0;
     const loc = document.getElementById('auth-loc').value.trim();
     if (!name) { showToast('請輸入冒險者名稱！'); return; }
+    if (!selectedCharId) { showToast('請選擇一個角色！'); return; }
 
-    // Check if user exists, if not loginAs will create it. We'll update the data right after.
-    loginAs(name, role);
     const a = me();
-    if (a) {
-        if (age) a.age = age;
-        if (loc) a.location = loc;
-        saveGlobal();
-    }
+    a.name = name;
+    if (age) a.age = age;
+    if (loc) a.location = loc;
+
+    const c = CHARACTERS.find(x => x.id === selectedCharId);
+    a.character = { ...c };
+    saveGlobal();
+    showCelebration(c.emoji, `${c.name} 已加入隊伍！`, '冒險即將開始…');
+    setTimeout(() => enterApp(), 2500);
 }
+
+// Legacy doLogin for backward compatibility
+function doLogin() { doLoginStep1(); }
 
 function doGoogleLogin() {
     // Simulated Google login for POC
@@ -319,9 +365,9 @@ function loginAs(name, role) {
     globalData.activeId = accId;
     saveGlobal();
     if (!me().character) {
-        showScreen('screen-charselect');
+        showScreen('screen-auth-step2');
         renderCharGrid();
-        showToast(`歡迎，${name}！選擇你的角色！`);
+        showToast(`歡迎，${name}！完成你的冒險者檔案！`);
     } else {
         enterApp();
         showToast(`歡迎回來，${name}！`);
