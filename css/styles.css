@@ -3610,3 +3610,9 @@ select:focus {
     line-height: 1.6;
     margin-bottom: 16px;
 }
+
+/* Unified coin icon color across all screens */
+.ph-bold.ph-coin,
+.ph-fill.ph-coin {
+    color: #F59E0B !important;
+}

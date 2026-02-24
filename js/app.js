@@ -1314,26 +1314,26 @@ function renderRewards() {
     }
 
     // Render Regular List (Refined 2-Column Equal Height Layout - App Store Style)
-    document.getElementById('rewards-list').innerHTML = `<div style="display:grid; grid-template-columns:repeat(2, 1fr); grid-auto-rows:1fr; gap:16px; width:100%;">` + regular.map(r => {
+    document.getElementById('rewards-list').innerHTML = `<div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:16px; width:100%; align-items:stretch;">` + regular.map(r => {
         const canAfford = a.points >= r.cost;
         return `
-    <div class="card" style="padding: 16px; display:flex; flex-direction:column; background: #ffffff; border: 1px solid ${canAfford ? 'var(--border)' : 'rgba(0,0,0,0.06)'}; border-radius: 20px; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); ${!canAfford ? 'opacity: 0.6; filter: grayscale(0.5);' : 'box-shadow: 0 8px 24px rgba(0,0,0,0.04); cursor:pointer;'} height:100%;" ${canAfford ? `onclick="redeemReward('${r.sku}')"` : ''}>
+    <div class="card" style="padding: 16px; display:flex; flex-direction:column; background: #ffffff; border: 1px solid ${canAfford ? 'var(--border)' : 'rgba(0,0,0,0.06)'}; border-radius: 20px; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); ${!canAfford ? 'opacity: 0.6; filter: grayscale(0.5);' : 'box-shadow: 0 8px 24px rgba(0,0,0,0.04); cursor:pointer;'}" ${canAfford ? `onclick="redeemReward('${r.sku}')"` : ''}>
         
-        <div style="display:flex; flex-direction:column; align-items:center; text-align:center; gap: 12px; flex-grow: 1;">
+        <div style="display:flex; flex-direction:column; align-items:center; text-align:center; gap: 12px; flex:1;">
             
             <!-- Icon Bubble -->
             <div style="width: 56px; height: 56px; border-radius: 50%; background: ${canAfford ? 'radial-gradient(circle at top left, rgba(99,102,241,0.15), rgba(99,102,241,0.05))' : 'rgba(0,0,0,0.04)'}; display:flex; justify-content:center; align-items:center; flex-shrink:0; border: 1px solid ${canAfford ? 'rgba(99,102,241,0.1)' : 'transparent'};">
                 <span style="font-size:32px; filter:drop-shadow(0 4px 6px rgba(0,0,0,0.1));">${r.icon}</span>
             </div>
             
-            <!-- Content Block -->
+            <!-- Content Block (fixed height) -->
             <div style="width:100%; overflow:hidden; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;">
-                <h3 style="font-size:15px; font-weight:900; color:var(--text); margin-bottom:6px; line-height:1.2; width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${esc(r.title)}</h3>
-                <p style="font-size:12px; color:var(--text2); line-height:1.4; margin:0; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${esc(r.desc)}</p>
+                <h3 style="font-size:15px; font-weight:900; color:var(--text); margin-bottom:6px; line-height:1.2; width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-height:18px;">${esc(r.title)}</h3>
+                <p style="font-size:12px; color:var(--text2); line-height:1.4; margin:0; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:34px;">${esc(r.desc)}</p>
             </div>
         </div>
 
-        <!-- Footer / Action Area -->
+        <!-- Footer / Action Area (always at bottom) -->
         <div style="margin-top:auto; padding-top:12px; border-top: 1px dashed rgba(0,0,0,0.08); display:flex; justify-content:space-between; align-items:center; flex-shrink: 0; width: 100%;">
             <div style="font-weight:900; color:${canAfford ? 'var(--primary)' : 'var(--text3)'}; font-size:15px; font-family:monospace; display:flex; align-items:center; gap:4px;">
                 <i class="ph-bold ph-coin" style="font-size:16px;"></i> ${r.cost}
