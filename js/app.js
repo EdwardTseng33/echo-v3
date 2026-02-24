@@ -718,7 +718,7 @@ function refreshProfile() {
         }
     }
     const locEl = document.getElementById('acc-location');
-    if (locEl) locEl.innerHTML = `${a.location || '台灣, 台北'} <i class="ph ph-caret-right"></i>`;
+    if (locEl) locEl.textContent = a.location || '尚未設定';
 
     const subEl = document.getElementById('menu-sub-label');
     if (subEl) {
@@ -791,7 +791,52 @@ function editAge() {
 
 function openAccountSettings() {
     showScreen('screen-account');
-    refreshProfile();
+    const a = me(); if (!a) return;
+    // Populate account fields
+    const elName = document.getElementById('acc-username');
+    const elAge = document.getElementById('acc-age');
+    const elEmail = document.getElementById('acc-email');
+    const elGoogle = document.getElementById('acc-google-status');
+    const elLoc = document.getElementById('acc-location');
+    if (elName) elName.textContent = a.name || '冒險者';
+    if (elAge) elAge.textContent = a.age || '?';
+    if (elEmail) elEmail.textContent = a.email || 'user@echo.com';
+    if (elGoogle) {
+        if (a.googleBound) {
+            elGoogle.innerHTML = '<span style="color:#10b981;font-weight:800;">已綁定</span> <i class="ph ph-caret-right"></i>';
+        } else {
+            elGoogle.innerHTML = '未綁定 <i class="ph ph-caret-right"></i>';
+        }
+    }
+    if (elLoc) elLoc.textContent = a.location || '尚未設定';
+}
+
+function editUsername() {
+    const a = me(); if (!a) return;
+    const newName = prompt('請輸入新的冒險者名稱：', a.name || '');
+    if (newName !== null && newName.trim() !== '') {
+        a.name = newName.trim();
+        saveGlobal();
+        openAccountSettings();
+        refreshHUD();
+        showToast('名稱已更新為「' + a.name + '」！');
+    }
+}
+
+function editAge() {
+    const a = me(); if (!a) return;
+    const newAge = prompt('請輸入年齡：', a.age || '');
+    if (newAge !== null && newAge.trim() !== '') {
+        const age = parseInt(newAge.trim());
+        if (isNaN(age) || age < 1 || age > 150) {
+            showToast('請輸入有效的年齡（1-150）');
+            return;
+        }
+        a.age = age;
+        saveGlobal();
+        openAccountSettings();
+        showToast('年齡已更新！');
+    }
 }
 
 // ===== ACCOUNT SETTINGS LOGIC =====
@@ -870,10 +915,10 @@ function renderTaskFeed() {
         let html = `
             <div class="no-guild-banner">
                 <div class="no-guild-icon">🏰</div>
-                <div class="no-guild-title">加入公會解鎖更多任務！</div>
-                <div class="no-guild-desc">加入或建立一個公會，即可查看並接取其他成員的任務，並解鎖獎勵商店。<br>你仍可以建立任務給自己嗎！</div>
+                <div class="no-guild-title">組隊冒險，獎勵加倍！</div>
+                <div class="no-guild-desc">建立或加入一個冒險公會，與隊友一起接取任務、累積獎勵！<br>目前你可以先建立自己的任務，隨時開始冒險 ⚡</div>
                 <button class="btn btn-primary" style="padding:10px 28px;font-size:14px;border-radius:14px;" onclick="openGuildJoinScreen()">
-                    <i class="ph-bold ph-castle-turret"></i> 加入或建立公會
+                    <i class="ph-bold ph-castle-turret"></i> 立即組隊出發
                 </button>
             </div>`;
         if (myTasks.length) {
