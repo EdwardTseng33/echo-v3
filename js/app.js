@@ -387,8 +387,8 @@ function renderCharGrid() {
     const grid = document.getElementById('char-grid');
     grid.innerHTML = CHARACTERS.map(c => `
     <div class="char-option ${selectedCharId === c.id ? 'selected' : ''}" onclick="selectChar('${c.id}')">
-      <div class="char-avatar class-${c.id}">
-        <img src="${c.transparentImg || c.img}" alt="${c.name}" style="width:64px;height:64px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4)); transition: opacity 0.3s; ${!c.transparentImg ? 'opacity: 0.8;' : 'opacity: 1;'}">
+      <div class="char-avatar">
+        <img src="${c.img}" alt="${c.name}" style="width:80px;height:80px;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(0,0,0,.3));">
       </div>
       <div class="char-name">${c.name}</div>
       <div class="char-class">${c.baseClass}</div>

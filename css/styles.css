@@ -2515,12 +2515,12 @@ select:focus {
     overflow: visible
 }
 
-/* Base blending and animation for ALL character images to remove dark backgrounds and feel alive */
+/* Base animation for ALL character images */
 .char-avatar img,
 .char-big img,
 .hud-chip img,
 .battle-player-sprite img {
-    mix-blend-mode: screen;
+    mix-blend-mode: normal;
     transform-origin: bottom center;
 }
 
