@@ -1313,11 +1313,11 @@ function renderRewards() {
         document.getElementById('rewards-featured').innerHTML = htmlF;
     }
 
-    // Render Regular List (Refined 2-Column Equal Height Layout)
-    document.getElementById('rewards-list').innerHTML = `<div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:16px; width:100%;">` + regular.map(r => {
+    // Render Regular List (2-Column Equal Size Layout)
+    document.getElementById('rewards-list').innerHTML = `<div style="display:grid; grid-template-columns:repeat(2, 1fr); grid-auto-rows:1fr; gap:16px; width:100%;">` + regular.map(r => {
         const canAfford = a.points >= r.cost;
         return `
-    <div class="card" style="padding: 16px; display:flex; flex-direction:column; justify-content:space-between; background: #ffffff; border: 1px solid ${canAfford ? 'var(--border)' : 'rgba(0,0,0,0.06)'}; border-radius: 20px; ${!canAfford ? 'opacity: 0.6; filter: grayscale(0.5);' : 'box-shadow: 0 8px 24px rgba(0,0,0,0.04); cursor:pointer;'}" ${canAfford ? `onclick="redeemReward('${r.sku}')"` : ''}>
+    <div class="card" style="margin:0 !important; padding:16px; display:flex; flex-direction:column; justify-content:space-between; background:#ffffff; border:1px solid ${canAfford ? 'var(--border)' : 'rgba(0,0,0,0.06)'}; border-radius:20px; ${!canAfford ? 'opacity:0.6; filter:grayscale(0.5);' : 'box-shadow:0 8px 24px rgba(0,0,0,0.04); cursor:pointer;'}" ${canAfford ? `onclick="redeemReward('${r.sku}')"` : ''}>
         
         <!-- Top content: icon + text (fixed structure) -->
         <div style="display:flex; flex-direction:column; align-items:center; text-align:center; gap:8px;">
