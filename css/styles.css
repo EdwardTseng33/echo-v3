@@ -394,6 +394,12 @@ body::before {
     margin-top: 12px
 }
 
+/* Override card spacing inside grid layouts (rewards grid, etc.) */
+[style*="display:grid"]>.card+.card,
+[style*="display: grid"]>.card+.card {
+    margin-top: 0
+}
+
 /* TASK CARD */
 .task-card {
     background: var(--surface);
