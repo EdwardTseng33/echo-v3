@@ -211,9 +211,9 @@
                     </div>
                     <div class="char-dialogue-bubble" id="home-char-bubble"></div>
                     <div class="home-profile-info" style="flex:1;">
-                        <div class="home-greeting" style="font-size:18px; margin-bottom:8px;">哈囉，<span
+                        <div class="home-greeting" style="font-size:18px; margin-bottom:4px;">哈囉，<span
                                 id="hud-charname">冒險者</span>！</div>
-
+                        <div id="hud-guild-badge" class="guild-inline-badge" style="display:none;"></div>
                         <div class="xp-section" style="margin: 0; padding:0;">
                             <div class="xp-header"
                                 style="margin-bottom: 6px; display:flex; justify-content:space-between; align-items:baseline;">
@@ -549,6 +549,27 @@
                         style="color: #00E5FF">5</span><span class="p-label" style="font-weight:900"><i
                             class="ph-bold ph-shield"></i> 防禦</span></div>
             </div>
+
+            <!-- ===== 1. MY GUILD (PROMOTED) ===== -->
+            <div style="padding:0 16px; margin-top:8px;">
+                <div class="profile-guild-card" id="profile-guild-card" onclick="openGuildDashboard()">
+                    <div class="profile-guild-icon" id="profile-guild-icon">🏰</div>
+                    <div class="profile-guild-info">
+                        <div class="profile-guild-name" id="profile-guild-name">加入冒險小隊</div>
+                        <div class="profile-guild-desc" id="profile-guild-desc">加入或建立你的公會，解鎖更多任務！</div>
+                    </div>
+                    <i class="ph-bold ph-caret-right" style="color:var(--text3);font-size:18px;"></i>
+                </div>
+            </div>
+
+            <!-- ===== 2. ACHIEVEMENTS (PROMOTED) ===== -->
+            <div class="section-header" style="margin-top:16px;">
+                <h2>🏆 成就牆</h2>
+                <div></div>
+            </div>
+            <div class="ach-grid" id="ach-grid"></div>
+
+            <!-- ===== 3. EQUIPMENT ===== -->
             <div class="section-header" style="margin-top:8px">
                 <h2>裝備庫</h2>
                 <div></div>
@@ -558,40 +579,22 @@
                 </div>
             </div>
 
+            <!-- ===== 4. ALL SETTINGS (UNIFIED MENU) ===== -->
             <div class="menu-list">
+                <div class="menu-item" onclick="openAccountSettings()">
+                    <i class="ph-fill ph-user-gear" style="color:var(--primary)"></i> 帳號資訊設定
+                    <span class="menu-right">設定 <i class="ph ph-caret-right"></i></span>
+                </div>
                 <div class="menu-item" onclick="showScreen('screen-dashboard')">
-                    <i class="ph-fill ph-chart-bar"></i> 任務回顧
+                    <i class="ph-fill ph-chart-bar" style="color:#F59E0B;"></i> 任務回顧
                     <span class="menu-right">統計 <i class="ph ph-caret-right"></i></span>
                 </div>
-                <div class="menu-item" onclick="showScreen('screen-charselect')">
-                    <i class="ph-fill ph-user-switch"></i> 更換角色
-                    <span class="menu-right">切換 <i class="ph ph-caret-right"></i></span>
-                </div>
                 <div class="menu-item" onclick="showScreen('screen-subscription')">
-                    <i class="ph-fill ph-crown"></i> 我的訂閱
+                    <i class="ph-fill ph-crown" style="color:#FFD700;"></i> 我的訂閱
                     <span class="menu-right" id="menu-sub-label">免費版 <i class="ph ph-caret-right"></i></span>
                 </div>
             </div>
 
-            <div class="section-header" style="margin-top:16px;">
-                <h2>帳號與安全</h2>
-                <div></div>
-            </div>
-            <div class="menu-list">
-                <div class="menu-item" onclick="openAccountSettings()">
-                    <i class="ph-fill ph-user-gear"></i> 帳號資訊設定
-                    <span class="menu-right">設定 <i class="ph ph-caret-right"></i></span>
-                </div>
-                <div class="menu-item" onclick="openGuildDashboard()">
-                    <i class="ph-fill ph-castle-turret" style="color:#6366F1;"></i> 我的公會
-                    <span class="menu-right" id="menu-guild-label">尚未加入 <i class="ph ph-caret-right"></i></span>
-                </div>
-            </div>
-            <div class="section-header">
-                <h2>成就牆</h2>
-                <div></div>
-            </div>
-            <div class="ach-grid" id="ach-grid"></div>
             <div class="section-pad">
                 <!-- Compact Redemption Code -->
                 <div

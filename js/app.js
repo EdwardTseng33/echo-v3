@@ -594,7 +594,7 @@ function refreshAll() { refreshHUD(); renderTaskFeed(); checkAchievements(); }
 function refreshHUD() {
     const a = me(); if (!a) return;
     const c = a.character;
-    const stats = getPlayerStats(a); // Calculate latest stats
+    const stats = getPlayerStats(a);
 
     const elIcon = document.getElementById('hud-char-icon');
     if (elIcon) elIcon.innerHTML = c ? getCharImg(c, 28) : '🧙';
@@ -632,6 +632,20 @@ function refreshHUD() {
 
     const elXpNxt = document.getElementById('xp-next');
     if (elXpNxt) elXpNxt.textContent = a.level >= LEVEL_CAP ? 'MAX' : `→ Lv.${a.level + 1}`;
+
+    // Guild badge in home profile
+    const guildBadge = document.getElementById('hud-guild-badge');
+    if (guildBadge) {
+        const guild = a.guildId && globalData.guilds ? globalData.guilds[a.guildId] : null;
+        if (guild) {
+            const member = guild.members.find(m => m.id === globalData.activeId);
+            const roleTitle = member ? member.roleTitle || '成員' : '成員';
+            guildBadge.innerHTML = `${guild.icon} ${guild.name} · ${roleTitle}`;
+            guildBadge.style.display = 'inline-flex';
+        } else {
+            guildBadge.style.display = 'none';
+        }
+    }
 }
 
 function refreshProfile() {
@@ -712,6 +726,41 @@ function refreshProfile() {
             ? '<span style="color:#FFD700">Pro</span> <i class="ph ph-caret-right"></i>'
             : '免費版 <i class="ph ph-caret-right"></i>';
     }
+
+    // Update promoted guild card in profile
+    const guildCard = document.getElementById('profile-guild-card');
+    const guildIcon = document.getElementById('profile-guild-icon');
+    const guildName = document.getElementById('profile-guild-name');
+    const guildDesc = document.getElementById('profile-guild-desc');
+    if (guildCard) {
+        const guild = a.guildId && globalData.guilds ? globalData.guilds[a.guildId] : null;
+        if (guild) {
+            const member = guild.members.find(m => m.id === globalData.activeId);
+            const roleTitle = member ? member.roleTitle || '成員' : '成員';
+            if (guildIcon) guildIcon.textContent = guild.icon;
+            if (guildName) guildName.textContent = guild.name;
+            if (guildDesc) guildDesc.innerHTML = `<span style="color:var(--primary);font-weight:800;">${roleTitle}</span> · ${guild.members.length} 位成員`;
+        } else {
+            if (guildIcon) guildIcon.textContent = '🏰';
+            if (guildName) guildName.textContent = '加入冒險小隊';
+            if (guildDesc) guildDesc.textContent = '加入或建立你的公會，解鎖更多任務！';
+        }
+    }
+
+    // Guild badge under character name in profile
+    const profClassBadge = document.getElementById('prof-class-badge');
+    if (profClassBadge) {
+        const guild = a.guildId && globalData.guilds ? globalData.guilds[a.guildId] : null;
+        let badgeHtml = `⭐ Lv.${a.level} ${cn}`;
+        if (guild) {
+            const member = guild.members.find(m => m.id === globalData.activeId);
+            const roleTitle = member ? member.roleTitle || '成員' : '成員';
+            badgeHtml += ` <span class="guild-inline-badge" style="margin-left:6px;margin-top:0;">${guild.icon} ${guild.name}</span>`;
+        }
+        profClassBadge.innerHTML = badgeHtml;
+        profClassBadge.style.color = getClassColor(a.level);
+    }
+
     renderAchievements();
 }
 
@@ -812,6 +861,29 @@ function refreshSubPage() {
 // ===== TASK FEED =====
 function renderTaskFeed() {
     const feed = document.getElementById('task-feed');
+    const a = me();
+    const hasGuild = a && a.guildId && globalData.guilds && globalData.guilds[a.guildId];
+
+    if (!hasGuild) {
+        // Guild gate: show guidance banner + only self-created tasks
+        const myTasks = globalData.tasks.filter(t => t.status === 'PUBLISHED' && t.createdBy === globalData.activeId).sort((a, b) => b.createdAt - a.createdAt);
+        let html = `
+            <div class="no-guild-banner">
+                <div class="no-guild-icon">🏰</div>
+                <div class="no-guild-title">加入公會解鎖更多任務！</div>
+                <div class="no-guild-desc">加入或建立一個公會，即可查看並接取其他成員的任務，並解鎖獎勵商店。<br>你仍可以建立任務給自己嗎！</div>
+                <button class="btn btn-primary" style="padding:10px 28px;font-size:14px;border-radius:14px;" onclick="openGuildJoinScreen()">
+                    <i class="ph-bold ph-castle-turret"></i> 加入或建立公會
+                </button>
+            </div>`;
+        if (myTasks.length) {
+            html += `<div style="padding:0 16px 8px;"><div style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;">📋 我的任務</div></div>`;
+            html += myTasks.map(t => taskCardHTML(t)).join('');
+        }
+        feed.innerHTML = html;
+        return;
+    }
+
     const tasks = globalData.tasks.filter(t => t.status === 'PUBLISHED').sort((a, b) => b.createdAt - a.createdAt);
     if (!tasks.length) { feed.innerHTML = '<div class="text-center text-muted" style="padding:40px"><p>目前沒有可接取的任務！</p></div>'; return; }
     feed.innerHTML = tasks.map(t => taskCardHTML(t)).join('');
