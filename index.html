@@ -533,6 +533,10 @@
                     <i class="ph-fill ph-user-gear"></i> 帳號資訊設定
                     <span class="menu-right">設定 <i class="ph ph-caret-right"></i></span>
                 </div>
+                <div class="menu-item" onclick="openGuildDashboard()">
+                    <i class="ph-fill ph-castle-turret" style="color:#6366F1;"></i> 我的公會
+                    <span class="menu-right" id="menu-guild-label">尚未加入 <i class="ph ph-caret-right"></i></span>
+                </div>
             </div>
             <div class="section-header">
                 <h2>成就牆</h2>
@@ -765,6 +769,104 @@
                     <button class="btn" id="pur-confirm-btn"
                         style="flex:1; border-radius:14px; padding:12px 0; background: linear-gradient(135deg, var(--primary), #a855f7); color:white; border:none; box-shadow: 0 4px 12px rgba(99,102,241,0.25); font-weight:900; font-size:14px;"
                         onclick="confirmPurchase()">確認兌換</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== GUILD PROMPT MODAL ===== -->
+        <div class="modal-overlay" id="modal-guild-prompt"
+            style="display:none;align-items:center;justify-content:center;z-index:9000;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);">
+            <div class="modal-sheet" style="padding:28px 24px;text-align:center;max-width:340px;width:90%;">
+                <div style="font-size:56px;margin-bottom:12px;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.1));">🏰</div>
+                <div class="modal-title" style="font-size:18px;font-weight:900;margin-bottom:8px;">需要加入公會！</div>
+                <div class="modal-desc" style="margin-bottom:20px;color:var(--text2);font-size:13px;line-height:1.6;">
+                    冒險者，你還沒有專屬的冒險小隊！<br>請先加入或建立公會，才能領取隊長發布的專屬任務與獎勵喔！
+                </div>
+                <button class="btn btn-primary btn-block" style="margin-bottom:10px;" onclick="openGuildJoinScreen()">
+                    <i class="ph-bold ph-link"></i> 輸入邀請碼加入
+                </button>
+                <button class="btn btn-magic btn-block" onclick="openGuildCreateScreen()">
+                    <i class="ph-bold ph-plus-circle"></i> 創建新公會
+                </button>
+                <button class="btn btn-secondary btn-block" style="margin-top:10px;"
+                    onclick="closeGuildPrompt()">稍後再說</button>
+            </div>
+        </div>
+
+        <!-- ===== GUILD JOIN / CREATE SCREEN ===== -->
+        <div class="screen hidden" id="screen-guild-join">
+            <div class="topbar">
+                <button class="icon-btn" onclick="showScreen('screen-home')"><i
+                        class="ph-bold ph-arrow-left"></i></button>
+                <h1>🏰 加入公會</h1>
+                <div></div>
+            </div>
+            <div class="section-pad" style="padding:20px 16px;">
+                <!-- JOIN TAB -->
+                <div id="guild-join-section">
+                    <div class="card" style="text-align:center;padding:24px 16px;">
+                        <div style="font-size:48px;margin-bottom:8px;">🔗</div>
+                        <div style="font-weight:900;font-size:16px;margin-bottom:4px;">輸入邀請碼</div>
+                        <div style="font-size:12px;color:var(--text2);margin-bottom:16px;">向你的隊長（家長）索取6位數邀請碼</div>
+                        <input id="guild-join-code" type="text" maxlength="6" placeholder="請輸入 6 位數邀請碼"
+                            style="text-align:center;font-size:24px;letter-spacing:8px;font-weight:900;font-family:monospace;">
+                        <button class="btn btn-primary btn-block" style="margin-top:16px;" onclick="doJoinGuild()">
+                            <i class="ph-bold ph-sign-in"></i> 加入公會
+                        </button>
+                    </div>
+                    <div style="text-align:center;margin:24px 0;color:var(--text3);font-weight:800;font-size:13px;">— 或
+                        —</div>
+                    <button class="btn btn-magic btn-block" onclick="openGuildCreateScreen()">
+                        <i class="ph-bold ph-plus-circle"></i> 建立新的公會
+                    </button>
+                </div>
+                <!-- CREATE TAB -->
+                <div id="guild-create-section" style="display:none;">
+                    <div class="card" style="padding:24px 16px;">
+                        <div style="text-align:center;font-size:48px;margin-bottom:8px;" id="guild-create-icon-preview">
+                            🏰</div>
+                        <div style="font-weight:900;font-size:16px;text-align:center;margin-bottom:16px;">建立你的冒險公會</div>
+                        <div class="form-group">
+                            <label>公會名稱</label>
+                            <input id="guild-create-name" placeholder="例：王家大冒險團" maxlength="20">
+                        </div>
+                        <div class="form-group">
+                            <label>選擇公會圖示</label>
+                            <div class="guild-icon-grid" id="guild-icon-grid"></div>
+                        </div>
+                        <button class="btn btn-primary btn-block" style="margin-top:8px;" onclick="doCreateGuild()">
+                            <i class="ph-bold ph-flag-banner"></i> 建立公會！
+                        </button>
+                    </div>
+                    <button class="btn btn-secondary btn-block" style="margin-top:12px;"
+                        onclick="openGuildJoinScreen()">
+                        <i class="ph-bold ph-arrow-left"></i> 返回輸入邀請碼
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== GUILD DASHBOARD SCREEN ===== -->
+        <div class="screen hidden" id="screen-guild">
+            <div class="topbar">
+                <button class="icon-btn" onclick="showScreen('screen-character');refreshProfile()"><i
+                        class="ph-bold ph-arrow-left"></i></button>
+                <h1>🏰 我的公會</h1>
+                <div></div>
+            </div>
+            <div id="guild-dashboard-content" style="padding:16px;"></div>
+        </div>
+
+        <!-- ===== GUILD EDIT MODAL ===== -->
+        <div class="modal-overlay" id="modal-guild-edit"
+            style="display:none;align-items:center;justify-content:center;z-index:9000;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);">
+            <div class="modal-sheet" style="padding:24px;max-width:340px;width:90%;">
+                <div class="modal-title" style="font-size:16px;font-weight:900;margin-bottom:16px;text-align:center;"
+                    id="guild-edit-modal-title">編輯公會</div>
+                <div id="guild-edit-modal-body"></div>
+                <div style="display:flex;gap:12px;margin-top:16px;">
+                    <button class="btn btn-secondary" style="flex:1;" onclick="closeGuildEditModal()">取消</button>
+                    <button class="btn btn-primary" style="flex:1;" id="guild-edit-confirm-btn">確認</button>
                 </div>
             </div>
         </div>
