@@ -9,90 +9,59 @@ const PTS_RATIO = 0.2;
 const LEVEL_CAP = 50;
 const FREE_TASK_LIMIT = 1;
 const TYPE_LABELS = {
-    CHORE: '🧹 家事小幫手', LEARNING: '📚 學習挑戰',
-    ADVENTURE: '🌳 戶外探險', KINDNESS: '💖 善行任務', CREATIVE: '🎨 創意發想',
-    GAME: '🎮 互動遊戲', GOAL: '🏆 成就目標'
+    CHORE: '🧹 領地維護 (家務整理)', LEARNING: '📚 奧術研習 (學術挑戰)',
+    ADVENTURE: '🌳 荒野考察 (戶外體育)', KINDNESS: '💖 聖光差事 (善行委託)', CREATIVE: '🎨 煉金工藝 (創意發想)',
+    GAME: '🎮 酒館博弈 (互動遊戲)', GOAL: '🏆 傳奇宿命 (成就目標)'
 };
 const PUBLISHER_PRESETS = ['媽媽', '爸爸', '舅舅', '阿姨', '老師', '哥哥', '姊姊', '同學', '夥伴'];
 
 // 3-TIER CHARACTER SYSTEM: custom art + emoji per tier
-const CHARACTERS = [
-    {
-        id: 'warrior', emoji: '⚔️', name: '劍士', baseClass: '見習劍士', img: 'img/chars/warrior.png',
-        quotes: [
-            "又在摸魚？我的大劍都生鏽了啦！",
-            "這點小任務也叫大冒險？我阿嬤都解得比你快。",
-            "快點動起來啊，你想當一輩子的見習生嗎？",
-            "看什麼看？還不快去農經驗值！"
-        ],
-        tiers: [{ lvl: 1, emoji: '⚔️', title: '見習劍士', color: '#B0A0D0' },
-        { lvl: 10, emoji: '🗡️', title: '精銳劍士', color: '#00E5FF' },
-        { lvl: 25, emoji: '⚜️', title: '聖騎士', color: '#FFD700' }]
-    },
-    {
-        id: 'mage', emoji: '🧙', name: '魔法師', baseClass: '見習魔法師', img: 'img/chars/mage.png',
-        quotes: [
-            "你的智力點數是不是都拿去換珍奶了？",
-            "進度太慢了！看來你需要一發火球術醒醒腦。",
-            "身為偉大魔法師的夥伴，你這完成率不及格啊！",
-            "我感受不到你的魔力...啊，原來是你在發呆。"
-        ],
-        tiers: [{ lvl: 1, emoji: '🧙', title: '見習魔法師', color: '#B0A0D0' },
-        { lvl: 10, emoji: '🔮', title: '元素法師', color: '#00E5FF' },
-        { lvl: 25, emoji: '🌟', title: '大魔導師', color: '#FFD700' }]
-    },
-    {
-        id: 'ranger', emoji: '🏹', name: '弓箭手', baseClass: '見習弓手', img: 'img/chars/ranger.png',
-        quotes: [
-            "我的箭可是長眼睛的，你偷懶我看得一清二楚！",
-            "解個任務拖拖拉拉的，像在閉著眼睛射靶。",
-            "少囉嗦，快出發吧！不然我就拿你當標靶！",
-            "風告訴我...你今天好像還沒什麼進度喔？"
-        ],
-        tiers: [{ lvl: 1, emoji: '🏹', title: '見習弓手', color: '#B0A0D0' },
-        { lvl: 10, emoji: '🎯', title: '精準射手', color: '#00E5FF' },
-        { lvl: 25, emoji: '🦅', title: '神射鷹眼', color: '#FFD700' }]
-    },
-    {
-        id: 'healer', emoji: '🧝', name: '小精靈', baseClass: '見習精靈', img: 'img/chars/elf.png',
-        quotes: ["今天也要開開心心的解任務喔！", "別太累了，記得喝水休息！", "哇！你真的好棒！"],
-        tiers: [{ lvl: 1, emoji: '🧝', title: '見習精靈', color: '#B0A0D0' },
-        { lvl: 10, emoji: '🌿', title: '森林守護者', color: '#00E5FF' },
-        { lvl: 25, emoji: '🌸', title: '生命之花', color: '#FFD700' }]
-    },
+// GENERIC ADVENTURE QUOTES for the custom avatar
+const ADVENTURE_QUOTES = [
+    "今天想去哪裡冒險呢？",
+    "每一小步都是成長的大冒險！",
+    "準備好迎接新的挑戰了嗎？",
+    "你的金幣正在穩定增加中喔！",
+    "這是一個適合探索好天氣！",
+    "完成委託，解鎖更多驚喜！"
 ];
 
 // 3 major class tiers (simplified from 7)
+// 7 major class tiers for progression
 const CLASS_PATH = [
-    { lvl: 1, tier: 1, suffix: '見習', color: '#B0A0D0' },
-    { lvl: 10, tier: 2, suffix: '進階', color: '#00E5FF' },
-    { lvl: 25, tier: 3, suffix: '傳說', color: '#FFD700' },
+    { lvl: 1, tier: 1, suffix: '見習', color: '#B0A0D0', name: '冒險見習生' },
+    { lvl: 5, tier: 2, suffix: '青銅', color: '#CD7F32', name: '青銅冒險者' },
+    { lvl: 12, tier: 3, suffix: '白銀', color: '#C0C0C0', name: '白銀開拓者' },
+    { lvl: 20, tier: 4, suffix: '黃金', color: '#FFD700', name: '黃金守望者' },
+    { lvl: 30, tier: 5, suffix: '傳奇', color: '#00E5FF', name: '傳奇英雄' },
+    { lvl: 40, tier: 6, suffix: '聖域', color: '#F472B6', name: '聖域守護者' },
+    { lvl: 50, tier: 7, suffix: '永恆', color: '#FFFFFF', name: '永恆王者' },
 ];
 
 const DEFAULT_REWARDS = [
-    { sku: 'EQ1', title: '🗡️ 新手鐵劍', desc: '+5 攻擊力', cost: 150, icon: '🗡️', type: 'EQUIP', atk: 5, def: 0, custom: false },
-    { sku: 'EQ2', title: '🛡️ 木板盾牌', desc: '+5 防禦力', cost: 150, icon: '🛡️', type: 'EQUIP', atk: 0, def: 5, custom: false },
-    { sku: 'EQ3', title: '🔥 烈焰法杖', desc: '+15 攻擊力', cost: 500, icon: '🔥', type: 'EQUIP', atk: 15, def: 0, custom: false },
-    { sku: 'R0', title: '🧪 治療藥水', desc: '恢復 100% 總血量，挑戰魔王必備！', cost: 15, icon: '<i class="ph-bold ph-flask"></i>', type: 'POTION', custom: false },
-    { sku: 'R1', title: '🍦 冰淇淋兌換券', desc: '兌換一支冰淇淋', cost: 80, icon: '🍦', custom: false },
-    { sku: 'R2', title: '📖 故事書一本', desc: '家長陪讀一本故事書', cost: 50, icon: '📖', custom: false },
-    { sku: 'R3', title: '🎮 30分鐘遊戲時間', desc: '額外30分鐘螢幕時間', cost: 100, icon: '🎮', custom: false },
-    { sku: 'R4', title: '🌟 神秘驚喜盒', desc: '家長準備的驚喜小禮物', cost: 200, icon: '🎁', custom: false },
-    { sku: 'R5', title: '🏕️ 週末戶外冒險', desc: '家長帶你去戶外探險', cost: 300, icon: '🏕️', custom: false },
+    { sku: 'EQ1', title: '🗡️ 新手鐵劍', desc: '+5 攻擊力', cost: 150, icon: '🗡️', type: 'EQUIP', atk: 5, def: 0, stock: 5, custom: false },
+    { sku: 'EQ2', title: '🛡️ 木板盾牌', desc: '+5 防禦力', cost: 150, icon: '🛡️', type: 'EQUIP', atk: 0, def: 5, stock: 5, custom: false },
+    { sku: 'EQ3', title: '🔥 烈焰法杖', desc: '+15 攻擊力', cost: 500, icon: '🔥', type: 'EQUIP', atk: 15, def: 0, stock: 2, custom: false },
+    { sku: 'R0', title: '🧪 治療藥水', desc: '恢復 100% 總血量，挑戰魔王必備！', cost: 15, icon: '<i class="ph-bold ph-flask"></i>', type: 'POTION', stock: 10, custom: false },
+    { sku: 'R1', title: '🍦 冰淇淋兌換券', desc: '兌換一支冰淇淋', cost: 80, icon: '🍦', stock: 3, custom: false },
+    { sku: 'R2', title: '📖 故事書一本', desc: '家長陪讀一本故事書', cost: 50, icon: '📖', stock: 10, custom: false },
+    { sku: 'R3', title: '🎮 30分鐘遊戲時間', desc: '額外30分鐘螢幕時間', cost: 100, icon: '🎮', stock: 5, custom: false },
+    { sku: 'R4', title: '🌟 神秘驚喜盒', desc: '家長準備的驚喜小禮物', cost: 200, icon: '🎁', stock: 2, custom: false },
+    { sku: 'R5', title: '🏕️ 週末戶外冒險', desc: '家長帶你去戶外探險', cost: 300, icon: '🏕️', stock: 1, custom: false },
 ];
 
 const ACHIEVEMENTS = [
-    { id: '3tasks', icon: '🦄', name: '好事成三', desc: '勇於嘗試！發布或是進行3個任務', check: s => { const myT = s.tasks.filter(t => t.creatorId === s.id || t.claimedBy === s.id); return myT.length >= 3; }, reward: { name: '彩虹小馬', emoji: '🦄', atk: 5, def: 5, desc: '充滿魔力的小夥伴，會為你提振士氣！' } },
-    { id: 'done5', icon: '🥉', name: '見習生', desc: '完成5個任務', check: s => s.completedCount >= 5 },
-    { id: 'done20', icon: '🥈', name: '熟練者', desc: '完成20個任務', check: s => s.completedCount >= 20 },
-    { id: 'done50', icon: '🥇', name: '任務大師', desc: '完成50個任務', check: s => s.completedCount >= 50 },
+    { id: '3tasks', icon: '🦄', name: '好事成三', desc: '勇於嘗試！發布或是進行3個委託', check: s => { const myT = s.tasks.filter(t => t.creatorId === s.id || t.claimedBy === s.id); return myT.length >= 3; }, reward: { name: '彩虹小馬', emoji: '🦄', atk: 5, def: 5, desc: '充滿魔力的小夥伴，會為你提振士氣！' } },
+    { id: 'done5', icon: '🥉', name: '見習生', desc: '達成5個委託', check: s => s.completedCount >= 5 },
+    { id: 'done20', icon: '🥈', name: '熟練者', desc: '達成20個委託', check: s => s.completedCount >= 20 },
+    { id: 'done50', icon: '🥇', name: '委託大師', desc: '達成50個委託', check: s => s.completedCount >= 50 },
     { id: 'boss1', icon: '💀', name: '首戰告捷', desc: '打贏1次魔王', check: s => s.battlesWon >= 1 },
     { id: 'boss10', icon: '👑', name: '魔王剋星', desc: '打贏10次魔王', check: s => s.battlesWon >= 10 },
-    { id: 'rich', icon: '<i class="ph-bold ph-coin"></i>', name: '大富翁', desc: '累積獲得500點數', check: s => s.points >= 500 },
+    { id: 'rich', icon: '<i class="ph-bold ph-coin"></i>', name: '大富翁', desc: '累積獲得500金幣', check: s => s.points >= 500 },
     { id: 'lvl5', icon: '⭐', name: '漸入佳境', desc: '達到等級5', check: s => s.level >= 5 },
     { id: 'lvl10', icon: '🌟', name: '爐火純青', desc: '達到等級10', check: s => s.level >= 10 },
     { id: 'lvl20', icon: '🏆', name: '傳奇英雄', desc: '達到滿級Lv.20', check: s => s.level >= 20 },
-    { id: 'first_blood', icon: '🩸', name: '第一滴血', desc: '第一次完成任務', check: s => s.completedCount >= 1 },
+    { id: 'first_blood', icon: '🩸', name: '第一滴血', desc: '第一次達成委託', check: s => s.completedCount >= 1 },
     { id: 'shopaholic', icon: '🛍️', name: '購物狂', desc: '兌換過3次獎勵', check: s => (s.redemptions || []).length >= 3 }
 ];
 
@@ -111,15 +80,15 @@ const MONSTERS = [
 // AI TASK TEMPLATES (local, no API needed)
 const AI_TEMPLATES = {
     CHORE: [
-        { title: '整理書桌大冒險', desc: '把書桌上的文具和課本整理歸位，桌面要看得到桌墊！', location: '書房', checklist: ['清空桌面所有物品', '擦拭桌面', '文具放回筆筒', '課本按大小排好', '垃圾丟到垃圾桶'] },
+        { title: '整理書桌 (領地維護)', desc: '將混亂的書桌陣地重新布署，確保每一卷卷軸都各就各位！', location: '書房營地', checklist: ['清空桌面所有物品', '擦拭桌面', '文具放回筆筒', '課本按大小排好', '垃圾丟到垃圾桶'] },
         { title: '廚房小幫手', desc: '幫忙把餐桌上的碗盤收到水槽，並把桌子擦乾淨。', location: '廚房', checklist: ['收集所有碗盤', '放到水槽裡', '擦拭餐桌', '椅子推回原位'] },
         { title: '衣服王國整理術', desc: '把衣櫃裡的衣服重新摺好整齊排列！', location: '臥室', checklist: ['把衣服全部拿出來', '按種類分好', '每件衣服仔細摺好', '放回衣櫃排整齊'] },
         { title: '玩具歸位大作戰', desc: '把散落的玩具按類別放回玩具箱或櫃子裡。', location: '客廳', checklist: ['收集所有散落玩具', '按類別分類', '放回對應位置', '地板清空完畢'] },
     ],
     LEARNING: [
-        { title: '英文單字挑戰', desc: '背誦 10 個新的英文單字，並用每個單字造一個句子。', location: '書房', checklist: ['選出10個新單字', '每個字寫3遍', '每個字造一個句子', '找家長聽寫驗收'] },
-        { title: '數學闖關賽', desc: '完成數學習題練習，挑戰100分！', location: '書房', checklist: ['打開數學習作', '完成指定頁數', '自己先檢查一遍', '找家長批改'] },
-        { title: '閱讀一本繪本', desc: '認真讀完一本繪本，然後跟家長分享故事大意。', location: '客廳', checklist: ['選一本繪本', '安靜閱讀15分鐘', '想想故事在說什麼', '跟家長分享心得'] },
+        { title: '英文單字 (奧術語法)', desc: '研習 10 個古代奧術單字（英文），並將其編入你的施法句式中。', location: '奧術實驗室', checklist: ['選出10個新單字', '每個字寫3遍', '每個字造一個句子', '找家長聽寫驗收'] },
+        { title: '數學習題 (奧金算力)', desc: '完成數學習題練習，挑戰 100% 奧力精準度！', location: '算力工坊', checklist: ['打開數學習作', '完成指定頁數', '自己先檢查一遍', '找家長批改'] },
+        { title: '閱讀繪本 (解讀古卷)', desc: '認真研讀一本繪本卷軸，隨後向長老（家長）匯報心得。', location: '英雄酒館', checklist: ['選一本繪本', '安靜閱讀15分鐘', '想想故事在說什麼', '跟家長分享心得'] },
     ],
     ADVENTURE: [
         { title: '公園自然觀察家', desc: '到公園觀察三種不同的植物或昆蟲，並畫下來。', location: '附近公園', checklist: ['帶上畫冊和色鉛筆', '觀察第一種生物', '觀察第二種生物', '觀察第三種生物', '把觀察畫在畫冊上'] },
@@ -127,11 +96,19 @@ const AI_TEMPLATES = {
     ],
     KINDNESS: [
         { title: '寫一張感謝卡', desc: '親手寫一張感謝卡給家人或朋友，告訴他們你很感謝他們。', location: '家裡', checklist: ['準備卡紙和彩色筆', '想想要感謝誰', '寫下感謝的話', '裝飾卡片', '交給對方'] },
-        { title: '鄰居問候行動', desc: '主動向鄰居打招呼，並幫忙提東西或按電梯。', location: '社區', checklist: ['準備好微笑', '主動打招呼', '詢問需要幫忙嗎', '幫忙完成一件小事'] },
+        { title: '鄰里問候 (友好聖工)', desc: '主動向鄰里冒險者致意，並施展援助之手幫忙提物或按梯。', location: '領地廊道', checklist: ['準備好微笑', '主動打招呼', '詢問需要幫忙嗎', '幫忙完成一件小事'] },
     ],
     CREATIVE: [
-        { title: '自由畫一幅畫', desc: '用畫筆畫一幅你今天最開心的事！', location: '書桌', checklist: ['準備畫具', '想一個主題', '畫出草稿', '上色完成', '簽上名字和日期'] },
+        { title: '自由畫一幅畫', desc: '用畫筆畫一幅你今天最開心的事！', location: '書桌', checklist: ['準備畫具', '想一個主題', '畫出草稿', '上色完成', '簽上名字 and 日期'] },
         { title: '手作小禮物', desc: '用家裡現有的材料做一個小手工禮物。', location: '家裡', checklist: ['收集材料', '構思設計', '動手製作', '裝飾完成', '送給你想送的人'] },
+    ],
+    GAME: [
+        { title: '快問快答挑戰', desc: '跟爸爸或媽媽進行一場5分鐘的快問快答。', location: '客廳', checklist: ['準備5個問題', '邀請家長', '設定計時器', '完成問答', '分享心得'] },
+        { title: '室內尋寶遊戲', desc: '在客廳藏3個小東西，讓家長來找！', location: '客廳', checklist: ['選定3個寶物', '趁家長不注意藏好', '設計簡單提示', '引導家長尋寶', '公佈答案'] },
+    ],
+    GOAL: [
+        { title: '本週飲水計畫', desc: '每天喝足 5 杯水，持續一整週。', location: '家裡', checklist: ['準備專屬水杯', '早上喝1杯', '中午喝2杯', '下午喝1杯', '晚上喝1杯'] },
+        { title: '早睡早起好身體', desc: '連續三天晚上 10 點前睡覺。', location: '臥室', checklist: ['設定睡前提醒', '刷牙洗臉', '換好睡衣', '準時躺上床', '紀錄達成天數'] },
     ],
 };
 
@@ -158,7 +135,11 @@ const SoundManager = {
 
         // Retro sound synthesis rules
         if (type === 'click') {
-            // Removed click sound logic
+            osc.frequency.setValueAtTime(800, now);
+            osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
+            gain.gain.setValueAtTime(0.1, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+            osc.start(now); osc.stop(now + 0.1);
         } else if (type === 'attack') {
             osc.type = 'sawtooth';
             osc.frequency.setValueAtTime(150, now);
@@ -210,14 +191,14 @@ function defaultGlobal() {
         ],
     };
 }
-function defaultAccount(name, role) {
+function defaultAccount(name) {
     return {
-        name, role, character: null,
+        name, role: 'Adventurer', character: 'Adventurer',
         points: 0, level: 1, totalXP: 0, completedCount: 0,
         achievements: [], redemptions: [], activeSub: null,
         battlesWon: 0, lastBattleDate: null, potions: 0,
         consecutiveLogins: 0, lastDailyClaim: null,
-        equipment: []
+        equipment: [], avatarUrl: null
     };
 }
 function loadGlobal() {
@@ -264,10 +245,14 @@ document.addEventListener('DOMContentLoaded', () => {
         seedDemoTasks();
     }
 
+    // Data Migration: ensure rewards have stock
+    globalData.rewards.forEach(r => {
+        if (r.stock === undefined) r.stock = 5;
+    });
+
     if (globalData.activeId && me()) {
-        if (!me().character) {
+        if (!me().avatarUrl) {
             showScreen('screen-auth-step2');
-            renderCharGrid();
         } else {
             enterApp();
         }
@@ -291,7 +276,7 @@ function seedDemoTasks() {
 function doLoginStep1() {
     const email = document.getElementById('auth-email').value.trim();
     const password = document.getElementById('auth-password').value.trim();
-    if (!email) { showToast('請輸入 Email！'); return; }
+    if (!email) { showToast('請輸入冒險者聯絡 Email！'); return; }
     if (!password) { showToast('請輸入密碼！'); return; }
 
     // POC: check if existing account with this email
@@ -304,9 +289,8 @@ function doLoginStep1() {
         // Existing user — log in directly
         globalData.activeId = accId;
         saveGlobal();
-        if (!me().character) {
+        if (!me().avatarUrl) {
             showScreen('screen-auth-step2');
-            renderCharGrid();
             showToast('歡迎回來！請完成你的冒險者檔案');
         } else {
             enterApp();
@@ -315,13 +299,12 @@ function doLoginStep1() {
     } else {
         // New user — create account stub, go to step 2
         accId = 'U' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
-        globalData.accounts[accId] = defaultAccount('冒險者', 'child');
+        globalData.accounts[accId] = defaultAccount('冒險者');
         globalData.accounts[accId].email = email;
         globalData.activeId = accId;
         saveGlobal();
         showScreen('screen-auth-step2');
-        renderCharGrid();
-        showToast('帳號已建立！請輸入你的資訊');
+        showToast('契約已建立！請輸入你的資訊');
     }
 }
 
@@ -330,18 +313,35 @@ function completeRegistration() {
     const age = parseInt(document.getElementById('auth-age').value) || 0;
     const loc = document.getElementById('auth-loc').value.trim();
     if (!name) { showToast('請輸入冒險者名稱！'); return; }
-    if (!selectedCharId) { showToast('請選擇一個角色！'); return; }
 
     const a = me();
     a.name = name;
     if (age) a.age = age;
-    if (loc) a.location = loc;
+    if (loc) a.location = cleanLocation(loc);
+    if (currentAvatarUrl) a.avatarUrl = currentAvatarUrl;
 
-    const c = CHARACTERS.find(x => x.id === selectedCharId);
-    a.character = { ...c };
     saveGlobal();
-    showCelebration(c.emoji, `${c.name} 已加入隊伍！`, '冒險即將開始…');
+    showCelebration('📸', `歡迎冒險者 ${name}！`, '冒險即將開始…');
     setTimeout(() => enterApp(), 2500);
+}
+
+function cleanLocation(loc) {
+    if (!loc) return '';
+    let s = loc.trim();
+    // Fix "TaipeiTaipei" or "台北台北" type of duplication
+    if (s.length >= 4) {
+        const half = s.length / 2;
+        if (Number.isInteger(half)) {
+            const part1 = s.substring(0, half);
+            const part2 = s.substring(half);
+            if (part1 === part2) return part1;
+        }
+    }
+    // Fix "Taipei Taipei" or "台北 台北" duplicated words
+    const words = s.split(/[,，\s]+/);
+    const unique = [];
+    words.forEach(w => { if (w && !unique.includes(w)) unique.push(w); });
+    return unique.join(', ');
 }
 
 // Legacy doLogin for backward compatibility
@@ -350,23 +350,22 @@ function doLogin() { doLoginStep1(); }
 function doGoogleLogin() {
     // Simulated Google login for POC
     showToast('✅ Google 登入成功！');
-    loginAs('小明', 'child');
+    loginAs('小明');
 }
 
-function loginAs(name, role) {
+function loginAs(name) {
     let accId = null;
     for (const [id, acc] of Object.entries(globalData.accounts)) {
         if (acc.name === name) { accId = id; break; }
     }
     if (!accId) {
         accId = 'demo_child';
-        globalData.accounts[accId] = defaultAccount(name, role);
+        globalData.accounts[accId] = defaultAccount(name);
     }
     globalData.activeId = accId;
     saveGlobal();
-    if (!me().character) {
+    if (!me().avatarUrl) {
         showScreen('screen-auth-step2');
-        renderCharGrid();
         showToast(`歡迎，${name}！完成你的冒險者檔案！`);
     } else {
         enterApp();
@@ -382,56 +381,113 @@ function doLogout() {
 }
 
 // ===== CHARACTER =====
-let selectedCharId = null;
-function renderCharGrid() {
-    const grid = document.getElementById('char-grid');
-    grid.innerHTML = CHARACTERS.map(c => `
-    <div class="char-option ${selectedCharId === c.id ? 'selected' : ''}" onclick="selectChar('${c.id}')">
-      <div class="char-avatar">
-        <img src="${c.img}" alt="${c.name}" style="width:80px;height:80px;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(0,0,0,.3));">
-      </div>
-      <div class="char-name">${c.name}</div>
-      <div class="char-class">${c.baseClass}</div>
-    </div>
-  `).join('');
+// ===== AVATAR SYSTEM =====
+let currentAvatarUrl = null;
+let talkTmr = null;
+
+function charTalk(text, targetId, bubbleId) {
+    if (!text) return;
+    const target = document.getElementById(targetId);
+    const bubble = document.getElementById(bubbleId);
+    if (!target || !bubble) return;
+
+    bubble.textContent = text;
+    bubble.classList.add('show');
+    target.classList.add('talking');
+
+    // Play sound if available
+    if (window.soundManager) soundManager.play('click');
+
+    clearTimeout(talkTmr);
+    talkTmr = setTimeout(() => {
+        bubble.classList.remove('show');
+        target.classList.remove('talking');
+    }, 4000);
 }
-function selectChar(id) { selectedCharId = id; renderCharGrid(); }
-function confirmCharacter() {
-    if (!selectedCharId) { showToast('請先選一個角色！'); return; }
-    const c = CHARACTERS.find(x => x.id === selectedCharId);
-    me().character = { ...c };
-    saveGlobal();
-    showCelebration(c.emoji, `${c.name} 已加入隊伍！`, '冒險即將開始…');
-    setTimeout(() => enterApp(), 2500);
+
+async function handleProfileAvatarUpload(event) {
+    await handleAvatarUpload(event, true);
+    if (currentAvatarUrl) {
+        me().avatarUrl = currentAvatarUrl;
+        saveGlobal();
+        refreshProfile();
+        refreshHUD();
+        showToast('✨ 冒險者頭像已更新！');
+    }
 }
-function getCharTier(level) {
-    if (level >= 25) return 2; // tier 3 (index 2)
-    if (level >= 10) return 1; // tier 2 (index 1)
-    return 0; // tier 1 (index 0)
+
+async function handleAvatarUpload(event, isProfile = false) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const statusEl = document.getElementById('upload-status');
+    const previewEl = document.getElementById(isProfile ? 'prof-char-avatar' : 'avatar-preview');
+
+    if (statusEl) statusEl.style.display = 'block';
+
+    try {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            let src = e.target.result;
+
+            // Show initial preview
+            if (previewEl) {
+                if (isProfile) {
+                    previewEl.innerHTML = `<img src="${src}" class="avatar-animated" style="width:120px;height:120px;object-fit:contain; border-radius:50%">`;
+                } else {
+                    previewEl.innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover;">`;
+                }
+            }
+
+            // Remove background
+            const bgLib = typeof imglyRemoveBackground !== 'undefined' ? imglyRemoveBackground :
+                (typeof removeBackground !== 'undefined' ? removeBackground : null);
+
+            if (bgLib) {
+                try {
+                    const blob = await bgLib(src);
+                    src = URL.createObjectURL(blob);
+                    console.log("Background removed successfully");
+                } catch (err) {
+                    console.error("BG Removal failed, using original:", err);
+                }
+            }
+
+            currentAvatarUrl = src;
+
+            if (isProfile) {
+                me().avatarUrl = src;
+                saveGlobal();
+                refreshProfile();
+                showToast('✨ 頭像已更新！');
+            } else {
+                if (previewEl) previewEl.innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover;">`;
+            }
+
+            if (statusEl) statusEl.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+    } catch (err) {
+        console.error("Upload failed:", err);
+        if (statusEl) statusEl.style.display = 'none';
+        showToast('上傳失敗，請重試');
+    }
 }
 function getCharEmoji(charDef, level) {
-    if (!charDef) return '🧙';
-    const fullChar = CHARACTERS.find(c => c.id === charDef.id);
-    if (!fullChar || !fullChar.tiers) return charDef.emoji;
-    const ti = getCharTier(level);
-    return fullChar.tiers[ti].emoji;
+    return '🧙'; // Generic fallback emoji
 }
-function getCharImg(charDef, size) {
-    if (!charDef) return '<img src="img/chars/mage.png" style="width:' + (size || 48) + 'px;height:' + (size || 48) + 'px;object-fit:contain">';
-    const fullChar = CHARACTERS.find(c => c.id === charDef.id);
-    const src = fullChar ? fullChar.img : 'img/chars/mage.png';
-    return '<img src="' + src + '" alt="' + (charDef.name || '') + '" style="width:' + (size || 48) + 'px;height:' + (size || 48) + 'px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(0,0,0,.35))">';
+const DEFAULT_AVATAR = 'img/chars/mage.png';
+
+function getCharImg(charDef, size = 48, level = 1, isAnimated = true) {
+    const a = typeof charDef === 'string' ? globalData.accounts.find(x => x.id === charDef) : charDef;
+    const src = (a && a.avatarUrl) ? a.avatarUrl : DEFAULT_AVATAR;
+    const animClass = isAnimated ? 'avatar-animated' : '';
+    return `<img src="${src}" class="${animClass}" style="width:${size}px;height:${size}px;object-fit:contain; border-radius:50%">`;
 }
 function getClassName(level, char) {
-    if (!char) return '';
-    const fullChar = CHARACTERS.find(c => c.id === char.id);
-    if (fullChar && fullChar.tiers) {
-        const ti = getCharTier(level);
-        return fullChar.tiers[ti].title;
-    }
     let cls = CLASS_PATH[0];
     for (const c of CLASS_PATH) { if (level >= c.lvl) cls = c; }
-    return cls.suffix + char.name.replace('小', '');
+    return cls.name;
 }
 function getClassColor(level) {
     let cls = CLASS_PATH[0];
@@ -459,36 +515,26 @@ function enterApp() {
 }
 
 function showCharacterQuote() {
-    const a = me();
-    if (!a || !a.character || !a.character.quotes || a.character.quotes.length === 0) return;
+    const a = me(); if (!a) return;
+    const quotes = ADVENTURE_QUOTES;
+    if (!quotes || quotes.length === 0) return;
 
-    const quotes = a.character.quotes;
-    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-
-    const homeBubble = document.getElementById('home-char-bubble');
-    const profBubble = document.getElementById('prof-char-bubble');
-
-    // Only animate the bubble for the screen currently active
-    const activeBubble = currentScreen === 'screen-home' ? homeBubble : profBubble;
-    if (!activeBubble) return;
-
-    activeBubble.textContent = randomQuote;
-    activeBubble.style.opacity = '1';
-    activeBubble.style.transform = 'translateY(0) scale(1)';
-
-    // Hide it again after 4 seconds
-    setTimeout(() => {
-        activeBubble.style.opacity = '0';
-        activeBubble.style.transform = 'translateY(10px) scale(0.95)';
-    }, 4000);
+    if (dialogueInterval) clearInterval(dialogueInterval);
+    dialogueInterval = setInterval(() => {
+        if (currentScreen !== 'screen-home' && currentScreen !== 'screen-character') return;
+        const q = quotes[Math.floor(Math.random() * quotes.length)];
+        const targetId = currentScreen === 'screen-home' ? 'hud-char-icon' : 'prof-char';
+        const bubbleId = currentScreen === 'screen-home' ? 'hud-char-bubble' : 'prof-char-bubble';
+        charTalk(q, targetId, bubbleId);
+    }, 15000 + Math.random() * 10000);
 }
 
 // ===== DAILY LOGIN =====
 const DAILY_REWARDS = [
-    { day: 1, icon: '💎', label: '10 點數', action: a => a.points += 10 },
+    { day: 1, icon: '💎', label: '10 金幣', action: a => a.points += 10 },
     { day: 2, icon: '<i class="ph-bold ph-flask"></i>', label: '1 藥水', action: a => a.potions = (a.potions || 0) + 1 },
     { day: 3, icon: '⚡', label: '50 XP', action: a => { a.totalXP += 50; a.level = calcLevel(a.totalXP); } },
-    { day: 4, icon: '💎', label: '30 點數', action: a => a.points += 30 },
+    { day: 4, icon: '💎', label: '30 金幣', action: a => a.points += 30 },
     { day: 5, icon: '<i class="ph-bold ph-flask"></i>', label: '2 藥水', action: a => a.potions = (a.potions || 0) + 2 },
     { day: 6, icon: '⚡', label: '200 XP', action: a => { a.totalXP += 200; a.level = calcLevel(a.totalXP); } },
     { day: 7, icon: '🎁', label: '神秘大獎', action: a => { a.points += 100; a.potions = (a.potions || 0) + 3; } }
@@ -597,7 +643,7 @@ function refreshHUD() {
     const stats = getPlayerStats(a);
 
     const elIcon = document.getElementById('hud-char-icon');
-    if (elIcon) elIcon.innerHTML = c ? getCharImg(c, 28) : '🧙';
+    if (elIcon) elIcon.innerHTML = getCharImg(a, 90, a.level, false);
 
     const elName = document.getElementById('hud-charname');
     if (elName) elName.textContent = a.name;
@@ -650,13 +696,20 @@ function refreshHUD() {
 
 function refreshProfile() {
     const a = me(); if (!a) return;
-    const c = a.character || { emoji: '🧙', name: '冒險者', id: 'mage' };
     const tierIdx = getCharTier(a.level);
     const stats = getPlayerStats(a);
 
     const bigEl = document.getElementById('prof-char');
-    bigEl.innerHTML = getCharImg(c, 80);
-    bigEl.className = 'char-big' + (tierIdx === 1 ? ' tier-2' : tierIdx === 2 ? ' tier-3' : '');
+    const bubbleEl = document.getElementById('prof-char-bubble');
+    if (bigEl) {
+        bigEl.innerHTML = getCharImg(a, 130, a.level, false);
+        bigEl.className = 'char-big';
+        bigEl.style.cursor = 'pointer';
+        bigEl.onclick = () => {
+            const quote = ADVENTURE_QUOTES[Math.floor(Math.random() * ADVENTURE_QUOTES.length)];
+            charTalk(quote, 'prof-char', 'prof-char-bubble');
+        };
+    }
 
     // Show pet icons overlay if any
     if (stats.pets && stats.pets.length > 0) {
@@ -664,14 +717,18 @@ function refreshProfile() {
         bigEl.innerHTML += petsHtml;
     }
 
-    // Set avatar ring gradient based on class
-    const ringEl = document.getElementById('prof-avatar-ring');
-    ringEl.className = 'char-profile-avatar class-' + (c.id || 'mage');
+    // Set avatar ring color based on class
+    const ringEl = document.querySelector('.avatar-neon-ring');
+    const glowEl = document.querySelector('.avatar-neon-glow');
+    const ringColor = getClassColor(a.level);
+    if (ringEl) ringEl.style.background = `conic-gradient(from var(--angle), ${ringColor}, #a855f7, #ec4899, ${ringColor})`;
+    if (glowEl) glowEl.style.background = `conic-gradient(from var(--angle), ${ringColor}, #a855f7, #ec4899, ${ringColor})`;
+
     document.getElementById('prof-name').textContent = a.name;
-    const cn = getClassName(a.level, c);
+    const cn = getClassName(a.level);
     document.getElementById('prof-classname').textContent = cn;
     document.getElementById('prof-class-badge').innerHTML = `⭐ Lv.${a.level} ${cn}`;
-    document.getElementById('prof-class-badge').style.color = getClassColor(a.level);
+    document.getElementById('prof-class-badge').style.color = ringColor;
     document.getElementById('p-level').textContent = a.level;
     document.getElementById('p-xp').textContent = a.totalXP;
 
@@ -742,8 +799,8 @@ function refreshProfile() {
             if (guildDesc) guildDesc.innerHTML = `<span style="color:var(--primary);font-weight:800;">${roleTitle}</span> · ${guild.members.length} 位成員`;
         } else {
             if (guildIcon) guildIcon.textContent = '🏰';
-            if (guildName) guildName.textContent = '加入冒險小隊';
-            if (guildDesc) guildDesc.textContent = '加入或建立你的公會，解鎖更多任務！';
+            if (guildName) guildName.textContent = '加入公會';
+            if (guildDesc) guildDesc.textContent = '加入或建立你的公會，解鎖更多委託！';
         }
     }
 
@@ -780,12 +837,12 @@ function editUsername() {
 function editAge() {
     const a = me();
     if (!a) return;
-    const newAge = prompt('請輸入年齡：', a.age || 10);
+    const newAge = prompt('🎂 請輸入冒險者的年齡：', a.age || 10);
     if (newAge && !isNaN(parseInt(newAge)) && parseInt(newAge) > 0) {
         a.age = parseInt(newAge);
         saveGlobal();
         refreshProfile();
-        showToast('年齡修改成功！');
+        showToast('年齡已成功更新為「' + a.age + '」歲！');
     }
 }
 
@@ -843,11 +900,11 @@ function editAge() {
 function toggleGoogleBind() {
     const a = me(); if (!a) return;
     if (a.googleBound) {
-        if (confirm('確定要解除綁定 Google 帳號嗎？')) {
+        if (confirm('🔒 安全提醒：您確定要解除 Google 契約的連結嗎？這將增加冒險契約遺失的風險。')) {
             a.googleBound = false;
             saveGlobal();
             refreshProfile();
-            showToast('已解除 Google 帳號綁定。');
+            showToast('已安全解除 Google 契約連結。');
         }
     } else {
         // Mock Google Auth Flow
@@ -860,26 +917,29 @@ function toggleGoogleBind() {
 
 function changePasswordFlow() {
     const a = me(); if (!a) return;
-    const oldPass = prompt('請輸入目前密碼：', '');
+    const oldPass = prompt('🔑 請輸入您的目前密碼：', '');
     if (oldPass === null) return;
     if (oldPass.trim() === '') {
-        showToast('密碼不正確。'); return;
+        showToast('❌ 驗證失敗：密碼不正確。'); return;
     }
-    const newPass = prompt('請輸入新密碼：', '');
+    const newPass = prompt('🆕 請輸入新的安全密碼：', '');
     if (newPass === null || newPass.trim() === '') return;
-    const confirmPass = prompt('請再次輸入新密碼：', '');
+    const confirmPass = prompt('✅ 請再次輸入新密碼以確認：', '');
     if (newPass !== confirmPass) {
-        showToast('兩次密碼不一致，請重試！');
+        showToast('⚠️ 警告：兩次輸入的新密碼不相符！');
         return;
     }
-    showCelebration('🔒', '密碼更新成功', '下次請使用新密碼登入！');
+    // POC: Store password stub
+    a.p_hash = '***'; // Simulated
+    saveGlobal();
+    showCelebration('🔒', '密碼更新成功', '您的契約現在更安全了！');
 }
 
 function editLocation() {
     const a = me(); if (!a) return;
     const newLoc = prompt('請輸入您目前的所在地：', a.location || '台灣, 台北');
     if (newLoc !== null && newLoc.trim() !== '') {
-        a.location = newLoc.trim();
+        a.location = cleanLocation(newLoc);
         saveGlobal();
         refreshProfile();
         showToast('所在地已更新！');
@@ -889,15 +949,17 @@ function editLocation() {
 function refreshSubPage() {
     const a = me(); if (!a) return;
     if (a.subscription === 'pro') {
-        document.getElementById('sub-title').textContent = '⭐ Pro 冒險隊員';
-        document.getElementById('sub-desc').textContent = '享受無限任務與獨家獎勵！';
-        document.getElementById('sub-action-btn').textContent = '已訂閱';
+        document.getElementById('sub-title').textContent = '⭐ 傳奇領主 (PRO)';
+        document.getElementById('sub-desc').textContent = '已覺醒所有特權，盡情享受冒險！';
+        document.getElementById('sub-title-icon').textContent = '👑';
+        document.getElementById('sub-action-btn').textContent = '✅ 已覺醒特權';
         document.getElementById('sub-action-btn').disabled = true;
         document.getElementById('sub-action-btn').style.opacity = '0.5';
     } else {
-        document.getElementById('sub-title').textContent = '免費冒險者';
-        document.getElementById('sub-desc').textContent = '可發布 1 次任務體驗';
-        document.getElementById('sub-action-btn').textContent = '👑 立即訂閱';
+        document.getElementById('sub-title').textContent = '初級冒險者';
+        document.getElementById('sub-desc').textContent = '目前階級：平民冒險家';
+        document.getElementById('sub-title-icon').textContent = '🧭';
+        document.getElementById('sub-action-btn').textContent = '👑 晉升傳奇領主';
         document.getElementById('sub-action-btn').disabled = false;
         document.getElementById('sub-action-btn').style.opacity = '1';
     }
@@ -907,31 +969,39 @@ function refreshSubPage() {
 function renderTaskFeed() {
     const feed = document.getElementById('task-feed');
     const a = me();
-    const hasGuild = a && a.guildId && globalData.guilds && globalData.guilds[a.guildId];
+    const g = getMyGuild();
 
-    if (!hasGuild) {
-        // Guild gate: show guidance banner + only self-created tasks
-        const myTasks = globalData.tasks.filter(t => t.status === 'PUBLISHED' && t.createdBy === globalData.activeId).sort((a, b) => b.createdAt - a.createdAt);
-        let html = `
-            <div class="no-guild-banner">
+    let headHtml = '';
+    if (!g) {
+        headHtml = `
+            <div class="no-guild-banner" id="home-guild-banner" style="margin-bottom:16px;">
                 <div class="no-guild-icon">🏰</div>
-                <div class="no-guild-title">組隊冒險，獎勵加倍！</div>
-                <div class="no-guild-desc">建立或加入一個冒險公會，與隊友一起接取任務、累積獎勵！<br>目前你可以先建立自己的任務，隨時開始冒險 ⚡</div>
+                <div class="no-guild-title">解鎖公會特權，讓冒險更有溫度！</div>
+                <div class="no-guild-desc">加入公會開啟家族冒險，解鎖專屬任務與獨家獎勵！⚔️</div>
                 <button class="btn btn-primary" style="padding:10px 28px;font-size:14px;border-radius:14px;" onclick="openGuildJoinScreen()">
-                    <i class="ph-bold ph-castle-turret"></i> 立即組隊出發
+                    <i class="ph-bold ph-magic-wand"></i> ✨ 開啟公會冒險
                 </button>
             </div>`;
-        if (myTasks.length) {
-            html += `<div style="padding:0 16px 8px;"><div style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:8px;">📋 我的任務</div></div>`;
-            html += myTasks.map(t => taskCardHTML(t)).join('');
-        }
-        feed.innerHTML = html;
-        return;
+    } else {
+        headHtml = `
+            <div class="card" style="padding:16px; margin-bottom:16px; border-left: 4px solid var(--primary); background: linear-gradient(90deg, var(--surface), #ffffff);" onclick="openGuildDashboard()">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div style="font-size:32px;">${g.icon || '🏰'}</div>
+                    <div style="flex:1;">
+                        <div style="font-size:11px; font-weight:900; color:var(--primary); text-transform:uppercase;">所屬公會</div>
+                        <h4 style="font-size:16px; font-weight:900;">${esc(g.name)}</h4>
+                    </div>
+                    <i class="ph-bold ph-caret-right" style="color:var(--text3)"></i>
+                </div>
+            </div>`;
     }
 
     const tasks = globalData.tasks.filter(t => t.status === 'PUBLISHED').sort((a, b) => b.createdAt - a.createdAt);
-    if (!tasks.length) { feed.innerHTML = '<div class="text-center text-muted" style="padding:40px"><p>目前沒有可接取的任務！</p></div>'; return; }
-    feed.innerHTML = tasks.map(t => taskCardHTML(t)).join('');
+    if (!tasks.length) {
+        feed.innerHTML = headHtml + '<div class="text-center text-muted" style="padding:40px"><p>目前沒有可接取的委託！</p></div>';
+        return;
+    }
+    feed.innerHTML = headHtml + tasks.map(t => taskCardHTML(t)).join('');
 }
 
 function taskCardHTML(t) {
@@ -957,30 +1027,30 @@ function taskCardHTML(t) {
     <div style="width:100%; height:1px; background:var(--border); margin: 12px 0;"></div>
     <div class="task-meta" style="margin-top:0">
       <span class="task-publisher"><i class="ph-fill ph-user-circle"></i> ${esc(t.creator)} 發布</span>
-      <div style="display:flex; gap:8px;">
+       <div style="display:flex; gap:8px;">
           <span style="font-weight:900; color:#F59E0B; font-family:monospace; background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.2); padding:4px 10px; border-radius:12px; display:flex; align-items:center; gap:4px;"><i class="ph-bold ph-lightning" style="font-size:14px;"></i> ${XP_TABLE[t.difficulty] || 50} XP</span>
-          <span style="font-weight:900; color:var(--primary); font-family:monospace; background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.2); padding:4px 10px; border-radius:12px; display:flex; align-items:center; gap:4px;"><i class="ph-bold ph-coin" style="font-size:14px;"></i> ${Math.round((XP_TABLE[t.difficulty] || 50) * PTS_RATIO)} 點數</span>
+          <span style="font-weight:900; color:var(--primary); font-family:monospace; background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.2); padding:4px 10px; border-radius:12px; display:flex; align-items:center; gap:4px;"><i class="ph-bold ph-coin" style="font-size:14px;"></i> ${Math.round((XP_TABLE[t.difficulty] || 50) * PTS_RATIO)}</span>
       </div>
     </div>
   </div>`;
 }
 
 function statusLabel(s) {
-    return { PUBLISHED: '開放中', CLAIMED: '進行中', COMPLETED_PENDING_CONFIRM: '待確認', COMPLETED_CONFIRMED: '✅完成' }[s] || s;
+    return { PUBLISHED: '開放委託', CLAIMED: '冒險中', COMPLETED_PENDING_CONFIRM: '待確認', COMPLETED_CONFIRMED: '冒險達成' }[s] || s;
 }
 
 // ===== MY TASKS =====
 function renderMyTasks() {
     const uid = myId();
-    const active = globalData.tasks.filter(t => (t.claimedBy === uid || t.creatorId === uid) && t.status !== 'COMPLETED_CONFIRMED');
-    const done = globalData.tasks.filter(t => (t.claimedBy === uid || t.creatorId === uid) && t.status === 'COMPLETED_CONFIRMED');
+    const active = globalData.tasks.filter(t => t.claimedBy === uid && t.status !== 'COMPLETED_CONFIRMED');
+    const done = globalData.tasks.filter(t => t.claimedBy === uid && t.status === 'COMPLETED_CONFIRMED');
 
     document.getElementById('mytasks-active').innerHTML = active.length
         ? active.map(t => taskCardHTML(t)).join('')
-        : '<div class="text-center text-muted" style="padding:24px"><p>沒有進行中的任務</p></div>';
+        : '<div class="text-center text-muted" style="padding:24px"><p>沒有進行中的冒險</p></div>';
     document.getElementById('mytasks-done').innerHTML = done.length
         ? done.map(t => taskCardHTML(t)).join('')
-        : '<div class="text-center text-muted" style="padding:24px"><p>還沒完成過任務！</p></div>';
+        : '<div class="text-center text-muted" style="padding:24px"><p>還沒達成過冒險！</p></div>';
 }
 
 // ===== TASK DETAIL =====
@@ -1012,7 +1082,7 @@ function openDetail(taskId, returnTo) {
     const checkEl = document.getElementById('det-checklist');
     if (t.checklist && t.checklist.length) {
         const isClaimer = t.claimedBy === myId();
-        checkEl.innerHTML = `<h3 class="mb-2" style="font-size:14px;font-weight:900">📝 任務步驟</h3>` +
+        checkEl.innerHTML = `<h3 class="mb-2" style="font-size:14px;font-weight:900">📝 委託內容</h3>` +
             t.checklist.map((item, i) => `
         <div class="flex items-center gap-2 mb-2" style="padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;cursor:${isClaimer ? 'pointer' : 'default'}"
           ${isClaimer ? `onclick="toggleCheckItem('${t.id}',${i})"` : ''}>
@@ -1032,22 +1102,31 @@ function openDetail(taskId, returnTo) {
     const isMine = t.creatorId === uid;
     let html = '';
 
-    if (t.status === 'PUBLISHED' && !isMine)
-        html = `<button class="btn btn-primary btn-block" onclick="claimTask('${t.id}')"><i class="ph-bold ph-hand-grabbing"></i> 接下這個任務！</button>`;
-    else if (t.status === 'PUBLISHED' && isMine)
-        html = `<p class="text-center text-muted text-sm">等待冒險者接取任務…</p>`;
+    if (t.status === 'PUBLISHED')
+        html = `<button class="btn btn-primary btn-block" onclick="claimTask('${t.id}')"><i class="ph-bold ph-hand-grabbing"></i> 承接此項委託！</button>`;
     else if (t.status === 'CLAIMED' && t.claimedBy === uid)
-        html = `<button class="btn btn-magic btn-block" onclick="submitComplete('${t.id}')"><i class="ph-bold ph-check-circle"></i> 任務完成！提交驗收</button>`;
+        html = `<button class="btn btn-magic btn-block" onclick="submitComplete('${t.id}')"><i class="ph-bold ph-check-circle"></i> 委託達成！提交驗收</button>`;
     else if (t.status === 'CLAIMED' && isMine)
-        html = `<p class="text-center text-muted text-sm">冒險者正在執行任務…</p>`;
+        html = `<p class="text-center text-muted text-sm">冒險者正在執行委託…</p>`;
     else if (t.status === 'COMPLETED_PENDING_CONFIRM' && isMine) {
-        recSec.style.display = 'block';
-        html = `<div class="flex gap-2"><button class="btn btn-green" style="flex:1" onclick="confirmComplete('${t.id}')"><i class="ph-bold ph-seal-check"></i> ✅ 通過！</button><button class="btn btn-secondary" style="flex:1;border-color:var(--red);color:var(--red)" onclick="rejectComplete('${t.id}')"><i class="ph-bold ph-x-circle"></i> ❌ 退回</button></div>`;
+        const hasEcho = globalData.echoes[t.id];
+        if (hasEcho) {
+            echoSec.style.display = 'block';
+            renderEchoPlayer(t.id);
+            recSec.style.display = 'none'; // Keep recorder hidden if we already have an echo to play
+        } else {
+            recSec.style.display = 'none';
+        }
+        html = `<div class="flex gap-2"><button class="btn btn-green" style="flex:1" onclick="confirmComplete('${t.id}')"><i class="ph-bold ph-seal-check"></i> ✅ 通過！</button><button class="btn btn-secondary" style="flex:1;border-color:var(--red);color:var(--red)" onclick="rejectComplete('${t.id}')"><i class="ph-bold ph-x-circle"></i> ❌ 退回委託</button></div>`;
     } else if (t.status === 'COMPLETED_PENDING_CONFIRM' && !isMine)
         html = `<p class="text-center text-muted text-sm">已提交，等待 ${esc(t.creator)} 確認…</p>`;
     else if (t.status === 'COMPLETED_CONFIRMED') {
-        html = `<p class="text-center font-bold" style="color:var(--green)"><i class="ph-fill ph-check-circle"></i> 冒險完成！</p>`;
-        if (globalData.echoes[t.id]) { echoSec.style.display = 'block'; renderEchoPlayer(t.id); }
+        html = `<p class="text-center font-bold" style="color:var(--green);margin-bottom:12px;"><i class="ph-fill ph-check-circle"></i> 冒險完成！已領取獎勵</p>`;
+        if (globalData.echoes[t.id]) {
+            echoSec.style.display = 'block';
+            renderEchoPlayer(t.id);
+        }
+        recSec.style.display = 'none';
     }
     acts.innerHTML = html;
     showScreen('screen-detail');
@@ -1109,7 +1188,7 @@ function aiGenerateTask() {
     if (tpl.location) document.getElementById('c-location').value = tpl.location;
     createChecklist = [...tpl.checklist];
     renderCreateChecklist();
-    showToast('✨ AI 已為你生成任務內容！');
+    showToast('✨ AI 已為你生成委託內容！');
 }
 
 function publishTask() {
@@ -1119,8 +1198,8 @@ function publishTask() {
     const diff = document.getElementById('c-diff').value;
     const deadline = document.getElementById('c-deadline').value || null;
     const location = document.getElementById('c-location').value.trim() || null;
-    if (!title) { showToast('請輸入任務名稱！'); return; }
-    if (!desc) { showToast('請輸入任務說明！'); return; }
+    if (!title) { showToast('請輸入委託名稱！'); return; }
+    if (!desc) { showToast('請輸入委託說明！'); return; }
 
     const a = me();
     if (a.subscription === 'free' && a.tasksPublished >= FREE_TASK_LIMIT) {
@@ -1128,16 +1207,32 @@ function publishTask() {
         return;
     }
 
+    const taskId = gid();
     globalData.tasks.unshift({
-        id: gid(), title, desc, type, difficulty: diff,
+        id: taskId, title, desc, type, difficulty: diff,
         creator: a.name, creatorId: myId(),
         status: 'PUBLISHED', claimedBy: null, createdAt: Date.now(),
         deadline, location,
         checklist: createChecklist.map(text => ({ text, done: false })),
     });
+
+    // Handle optional voice reward
+    if (creationRecordedBlob) {
+        const reader = new FileReader();
+        const duration = creationRecordSec;
+        reader.onloadend = () => {
+            globalData.echoes[taskId] = { audio: reader.result, duration: duration, preRecorded: true };
+            saveGlobal();
+        };
+        reader.readAsDataURL(creationRecordedBlob);
+
+        // UI Reset for recording (since we are leaving the screen)
+        clearTaskCreationRecording();
+    }
+
     a.tasksPublished++;
     saveGlobal();
-    showToast('🎉 任務已發布！');
+    showToast('🎉 委託已發布！');
     checkAchievements();
     showScreen('screen-home');
 }
@@ -1148,7 +1243,7 @@ function claimTask(id) {
     if (!t || t.status !== 'PUBLISHED') return;
     t.status = 'CLAIMED'; t.claimedBy = myId(); t.claimedAt = Date.now();
     saveGlobal();
-    showToast('💪 任務已接取！加油！');
+    showToast('💪 委託已接取！加油！');
     openDetail(id);
 }
 
@@ -1179,24 +1274,17 @@ function confirmComplete(id) {
             const pStats = getPlayerStats(claimerAcc);
             claimerAcc.currentHp = 100 + claimerAcc.level * 10 + (pStats.def * 2); // Level up heals to full
             if (t.claimedBy === myId()) {
-                showCelebration('🎊', `升級！→ Lv.${claimerAcc.level}`, `血量全滿！ +${xpG}XP +${ptsG}點`);
+                showCelebration('🎊', `升級！→ Lv.${claimerAcc.level}`, `血量全滿！ +${xpG}XP +${ptsG}金幣`);
             }
         }
     }
 
-    // Save echo
-    if (currentRecordedBlob) {
-        const reader = new FileReader();
-        reader.onloadend = () => { globalData.echoes[id] = { audio: reader.result, duration: recordSec }; saveGlobal(); };
-        reader.readAsDataURL(currentRecordedBlob);
-        currentRecordedBlob = null;
-    }
-
     saveGlobal(); checkAchievements();
     const xpG = XP_TABLE[t.difficulty] || 50, ptsG = Math.round(xpG * PTS_RATIO);
-    showCelebration('🎉', '任務確認通過！', `獎勵 +${xpG}XP +${ptsG}點 已發送`);
+    showCelebration('🎉', '委託確認通過！', `獎勵 +${xpG}XP +${ptsG}金幣 已發送`);
     setTimeout(() => openDetail(id), 2600);
 }
+
 
 function rejectComplete(id) {
     const t = globalData.tasks.find(x => x.id === id);
@@ -1205,7 +1293,7 @@ function rejectComplete(id) {
     // Reset checklist
     if (t.checklist) t.checklist.forEach(c => c.done = false);
     saveGlobal();
-    showToast('📋 已退回，請重新完成任務！');
+    showToast('📋 已退回，請重新執行委託！');
     openDetail(id);
 }
 
@@ -1288,15 +1376,12 @@ function toggleAchievementSection(contentId, iconId) {
 
 function renderClassPath() {
     const a = me(); if (!a) return;
-    const c = a.character; if (!c) return;
-    const fullChar = CHARACTERS.find(x => x.id === c.id);
-    if (!fullChar || !fullChar.tiers) return;
-    document.getElementById('class-path').innerHTML = fullChar.tiers.map((tier, i) => {
+    document.getElementById('class-path').innerHTML = CLASS_PATH.map((tier, i) => {
         const reached = a.level >= tier.lvl;
         return `<div class="card flex items-center gap-2" style="${reached ? 'border-color:' + tier.color : 'opacity:.4'}">
-      <span style="font-size:36px;filter:${reached ? 'none' : 'grayscale(1)'}">${tier.emoji}</span>
+      <span style="font-size:36px;filter:${reached ? 'none' : 'grayscale(1)'}">${reached ? '🏆' : '🔒'}</span>
       <div>
-        <div style="font-weight:900;color:${reached ? tier.color : 'var(--text3)'}">${tier.title}</div>
+        <div style="font-weight:900;color:${reached ? tier.color : 'var(--text3)'}">${tier.name}</div>
         <div class="text-xs text-muted">Lv.${tier.lvl} ${i === 0 ? '起始' : '進化'}</div>
       </div>
       <span style="margin-left:auto;font-size:18px">${reached ? '✅' : '🔒'}</span>
@@ -1315,35 +1400,18 @@ function renderRewards() {
     const featured = sortedRewards[0]; // Highest cost is featured
     const regular = sortedRewards.slice(1);
 
-    // Render Unclaimed Echo Boxes (Audio Rewards)
+    // Render Unclaimed Echo Boxes - Logic Removed as per user request
     let echoBoxesHtml = '';
-    const myIdStr = myId();
-    Object.keys(globalData.echoes).forEach(taskId => {
-        const echoData = globalData.echoes[taskId];
-        const task = globalData.tasks.find(t => t.id === taskId);
-        // If it's my task that I completed, and I haven't listened to the echo reward yet
-        if (task && task.claimedBy === myIdStr && task.status === 'COMPLETED_CONFIRMED' && !echoData.listened) {
-            echoBoxesHtml += `
-            <div class="card" style="padding: 20px; display:flex; flex-direction:row; align-items:center; border: 2px solid #F59E0B; background: linear-gradient(135deg, rgba(255,255,255,1), rgba(245,158,11,0.05)); box-shadow: 0 8px 24px rgba(245, 158, 11, 0.2); position:relative; overflow:hidden; margin-bottom: 16px; cursor: pointer;" onclick="playEchoReward('${taskId}')">
-                <div style="font-size:64px; margin-right: 16px; animation: charFloat 3s ease-in-out infinite;">🎁</div>
-                <div style="flex:1;">
-                    <div style="font-size:11px; font-weight:900; color:#F59E0B; margin-bottom:4px; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; gap:4px;"><i class="ph-fill ph-sparkle"></i> 神秘寶箱歸屬：${esc(a.name)}</div>
-                    <h3 style="font-size:18px;font-weight:900;margin-bottom:6px;">未知的回聲獎勵</h3>
-                    <p class="text-xs text-muted" style="margin-bottom:12px; line-height:1.4;">完成「${esc(task.title)}」的專屬語音獎勵！</p>
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <div style="font-weight:900; color:#10b981; font-size:15px; background:rgba(16, 185, 129, 0.1); padding:4px 12px; border-radius:10px; border:1px solid rgba(16,185,129,0.2);">免費兌換</div>
-                        <button class="btn" style="padding:6px 16px; font-size:14px; border-radius:12px; font-weight:800; background: #F59E0B; color:white; border:none; box-shadow: 0 4px 12px rgba(245,158,11,0.3);">開啟寶箱 ✨</button>
-                    </div>
-                </div>
-            </div>`;
-        }
-    });
 
     // Render Featured
     if (featured) {
         const canAffordF = a.points >= featured.cost;
         const htmlF = echoBoxesHtml + `
-        <div class="card" style="padding: 20px; display:flex; flex-direction:row; align-items:center; border: 1px solid ${canAffordF ? 'rgba(99, 102, 241, 0.3)' : 'rgba(0,0,0,0.06)'}; background: #ffffff; box-shadow: ${canAffordF ? '0 8px 24px rgba(99, 102, 241, 0.15)' : '0 4px 12px rgba(0,0,0,0.05)'}; position:relative; overflow:hidden;">
+        <div class="card" style="padding: 20px; display:flex; flex-direction:row; align-items:center; border: 1px solid ${canAffordF && featured.stock > 0 ? 'rgba(99, 102, 241, 0.3)' : 'rgba(0,0,0,0.06)'}; background: #ffffff; box-shadow: ${canAffordF && featured.stock > 0 ? '0 8px 24px rgba(99, 102, 241, 0.15)' : '0 4px 12px rgba(0,0,0,0.05)'}; position:relative; overflow:hidden;">
+            <!-- Stock Badge -->
+            <div style="position:absolute; top:12px; right:12px; background:${featured.stock > 0 ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)'}; color:${featured.stock > 0 ? '#10b981' : '#ef4444'}; font-size:11px; font-weight:900; padding:4px 10px; border-radius:10px; border:1px solid ${featured.stock > 0 ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'};">
+                庫存: ${featured.stock}
+            </div>
             <div style="font-size:72px; filter:drop-shadow(0 4px 12px rgba(99, 102, 241, 0.2)); transform: scale(1.1); margin-right: 16px; animation: charFloat 3s ease-in-out infinite;">${featured.icon}</div>
             <div style="flex:1;">
                 <div style="font-size:11px; font-weight:900; color:var(--primary); margin-bottom:4px; text-transform:uppercase; letter-spacing:1px;">終極大獎</div>
@@ -1351,7 +1419,7 @@ function renderRewards() {
                 <p class="text-xs text-muted" style="margin-bottom:12px; line-height:1.4;">${esc(featured.desc)}</p>
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div style="font-weight:900; color:var(--primary); font-size:18px; font-family:monospace; background:rgba(99, 102, 241, 0.08); padding:4px 12px; border-radius:20px; display:flex; align-items:center; gap:4px;"><i class="ph-bold ph-coin"></i> ${featured.cost}</div>
-                    <button class="btn ${canAffordF ? 'btn-magic' : 'btn-secondary'}" style="padding:6px 16px; font-size:14px; border-radius:12px; font-weight:800;" onclick="redeemReward('${featured.sku}')" ${!canAffordF ? 'disabled style="opacity:.5"' : ''}>${canAffordF ? '兌換！' : '點數不足'}</button>
+                    <button class="btn ${canAffordF && featured.stock > 0 ? 'btn-magic' : 'btn-secondary'}" style="padding:6px 16px; font-size:14px; border-radius:12px; font-weight:800;" onclick="redeemReward('${featured.sku}')" ${(!canAffordF || featured.stock <= 0) ? 'disabled style="opacity:.5"' : ''}>${featured.stock <= 0 ? '已售罄' : canAffordF ? '兌換！' : '金幣不足'}</button>
                 </div>
             </div>
         </div>`;
@@ -1360,11 +1428,17 @@ function renderRewards() {
 
     // Render Regular List (2-Column Equal Size Layout)
     document.getElementById('rewards-list').innerHTML = `<div style="display:grid; grid-template-columns:repeat(2, 1fr); grid-auto-rows:1fr; gap:16px; width:100%;">` + regular.map(r => {
-        const canAfford = a.points >= r.cost;
+        const canAfford = a.points >= r.cost && r.stock > 0;
+        const outOfStock = r.stock <= 0;
         return `
-    <div class="card" style="margin:0 !important; padding:16px; display:flex; flex-direction:column; justify-content:space-between; background:#ffffff; border:1px solid ${canAfford ? 'var(--border)' : 'rgba(0,0,0,0.06)'}; border-radius:20px; ${!canAfford ? 'opacity:0.6; filter:grayscale(0.5);' : 'box-shadow:0 8px 24px rgba(0,0,0,0.04); cursor:pointer;'}" ${canAfford ? `onclick="redeemReward('${r.sku}')"` : ''}>
+    <div class="card" style="margin:0 !important; padding:16px; display:flex; flex-direction:column; justify-content:space-between; background:#ffffff; border:1px solid ${canAfford ? 'var(--border)' : 'rgba(0,0,0,0.06)'}; border-radius:20px; ${(!canAfford || outOfStock) ? 'opacity:0.6; filter:grayscale(0.5);' : 'box-shadow:0 8px 24px rgba(0,0,0,0.04); cursor:pointer;'}" ${canAfford ? `onclick="redeemReward('${r.sku}')"` : ''}>
         
-        <!-- Top content: icon + text (fixed structure) -->
+        <!-- Stock count -->
+        <div style="font-size:10px; font-weight:900; color:${outOfStock ? 'var(--red)' : 'var(--text3)'}; text-align:right; margin-bottom:4px;">
+            ${outOfStock ? '已售罄' : `庫存: ${r.stock}`}
+        </div>
+
+        <!-- Top content: icon + text -->
         <div style="display:flex; flex-direction:column; align-items:center; text-align:center; gap:8px;">
             <div style="width:56px; height:56px; border-radius:50%; background:${canAfford ? 'radial-gradient(circle at top left, rgba(99,102,241,0.15), rgba(99,102,241,0.05))' : 'rgba(0,0,0,0.04)'}; display:flex; justify-content:center; align-items:center; border:1px solid ${canAfford ? 'rgba(99,102,241,0.1)' : 'transparent'};">
                 <span style="font-size:32px; filter:drop-shadow(0 4px 6px rgba(0,0,0,0.1));">${r.icon}</span>
@@ -1373,13 +1447,13 @@ function renderRewards() {
             <p style="font-size:12px; color:var(--text2); line-height:1.4; margin:0; height:34px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">${esc(r.desc)}</p>
         </div>
 
-        <!-- Footer (always at bottom) -->
+        <!-- Footer -->
         <div style="padding-top:12px; border-top:1px dashed rgba(0,0,0,0.08); display:flex; justify-content:space-between; align-items:center; width:100%; margin-top:12px;">
             <div style="font-weight:900; color:${canAfford ? 'var(--primary)' : 'var(--text3)'}; font-size:15px; font-family:monospace; display:flex; align-items:center; gap:4px;">
                 <i class="ph-bold ph-coin" style="font-size:16px;"></i> ${r.cost}
             </div>
             <button class="btn" style="padding:4px 12px; font-size:13px; font-weight:800; border-radius:10px; border:none; background:${canAfford ? 'var(--primary)' : 'var(--surface)'}; color:${canAfford ? '#fff' : 'var(--text3)'}; pointer-events:none;">
-                ${canAfford ? '兌換' : '<i class="ph-bold ph-lock"></i>'}
+                ${outOfStock ? '售罄' : canAfford ? '兌換' : '<i class="ph-bold ph-lock"></i>'}
             </button>
         </div>
     </div>
@@ -1392,7 +1466,7 @@ let pendingPurchaseSku = null;
 function redeemReward(sku) {
     const a = me(); if (!a) return;
     const r = globalData.rewards.find(x => x.sku === sku);
-    if (!r || a.points < r.cost) { showToast('點數不足！'); return; }
+    if (!r || a.points < r.cost) { showToast('金幣不足！'); return; }
 
     pendingPurchaseSku = sku;
     // Strip HTML from title/icon for clean display if needed, but innerHTML supports emojis
@@ -1416,13 +1490,16 @@ function confirmPurchase() {
 
     const a = me(); if (!a) return;
     const r = globalData.rewards.find(x => x.sku === sku);
-    if (!r || a.points < r.cost) { showToast('點數不足！'); return; }
+    if (!r) return;
+    if (a.points < r.cost) { showToast('金幣不足！'); return; }
+    if (r.stock <= 0) { showToast('該商品已售罄！'); return; }
 
-    // Deduct points first
-    a.points -= r.cost;
+    // Deduct stock
+    r.stock--;
 
     // Potions go into inventory instead of immediate use
     if (r.type === 'POTION' || sku === 'R0') {
+        a.points -= r.cost;
         a.potions = (a.potions || 0) + 1;
         SoundManager.play('heal');
         showCelebration('<i class="ph-bold ph-flask"></i>', '獲得治療藥水！', '藥水已放入背包，可在戰鬥中使用！');
@@ -1430,7 +1507,10 @@ function confirmPurchase() {
     // Equipment goes into inventory
     else if (r.type === 'EQUIP') {
         const hasEquip = (a.equipment || []).find(x => x.sku === sku);
-        if (hasEquip) { showToast('你已經擁有這個裝備了！'); return; }
+        if (hasEquip) {
+            r.stock++; // Restore stock if already owned
+            showToast('你已經擁有這個裝備了！'); return;
+        }
 
         a.points -= r.cost;
         if (!a.equipment) a.equipment = [];
@@ -1440,9 +1520,11 @@ function confirmPurchase() {
         showCelebration(r.icon, '裝備獲得！', `成功裝備 ${r.title}！`);
         setTimeout(() => renderRewards(), 2600);
         return;
+    } else {
+        a.points -= r.cost;
+        a.redemptions.push({ sku, at: Date.now() });
     }
 
-    a.points -= r.cost; a.redemptions.push({ sku, at: Date.now() });
     saveGlobal(); checkAchievements();
     showCelebration(r.icon, '兌換成功！', r.title);
     setTimeout(() => renderRewards(), 2600);
@@ -1459,7 +1541,7 @@ function createCustomReward() {
     const icon = document.getElementById('rw-icon').value.trim() || '🎁';
     const cost = parseInt(document.getElementById('rw-cost').value) || 0;
     if (!title) { showToast('請輸入獎勵名稱'); return; }
-    if (cost < 1) { showToast('點數至少為 1'); return; }
+    if (cost < 1) { showToast('金幣至少為 1'); return; }
     globalData.rewards.push({ sku: 'C' + Date.now(), title: icon + ' ' + title, desc, icon, cost, custom: true });
     saveGlobal();
     document.getElementById('rw-title').value = ''; document.getElementById('rw-desc').value = '';
@@ -1479,7 +1561,7 @@ function processRedeemCode() {
 
     if (code === 'WELCOME100') {
         a.points += 100;
-        showCelebration('🪙', '兌換成功！', '獲得 100 點數');
+        showCelebration('🪙', '兌換成功！', '獲得 100 金幣');
     } else if (code === 'LEVELUP') {
         a.totalXP += 500;
         a.level = calcLevel(a.totalXP);
@@ -1494,9 +1576,9 @@ function processRedeemCode() {
         });
         if (count > 0) {
             a.completedCount += count;
-            showCelebration('✅', '兌換成功！', `強制完成 ${count} 個任務`);
+            showCelebration('✅', '兌換成功！', `強制達成 ${count} 個委託`);
         } else {
-            showToast('目前沒有進行中的任務');
+            showToast('目前沒有可執行的委託');
             return;
         }
     } else {
@@ -1514,7 +1596,7 @@ function activateSubscription() {
     const a = me(); if (!a) return;
     a.subscription = 'pro'; a.points += 200;
     saveGlobal(); closePaywall();
-    showCelebration('👑', '歡迎加入 Pro！', '獲得 200 回聲點數禮包');
+    showCelebration('👑', '歡迎加入 Pro！', '獲得 200 回聲金幣禮包');
     setTimeout(() => refreshAll(), 2600);
 }
 function closePaywall() { document.getElementById('paywall-modal').classList.remove('active'); }
@@ -1522,21 +1604,86 @@ function openPaywall() { document.getElementById('paywall-modal').classList.add(
 
 // ===== AUDIO ECHO =====
 let mediaRec = null, audioChunks = [], currentRecordedBlob = null, recordSec = 0, recInt = null, isRec = false;
-async function toggleRecording() { isRec ? stopRec() : await startRec(); }
-async function startRec() {
+let creationRecordedBlob = null, creationRecordSec = 0; // Separate state for task creation
+
+async function toggleRecording(isCreation = false) { isRec ? stopRec(isCreation) : await startRec(isCreation); }
+async function startRec(isCreation = false) {
+    const limit = isCreation ? 10 : 60;
+    const prefix = isCreation ? 'create-' : '';
+    const statusEl = document.getElementById(prefix + 'rec-status');
+    const hintEl = document.getElementById(prefix + 'rec-hint');
+    const timerEl = document.getElementById(prefix + 'rec-timer');
+    const btnEl = document.getElementById(prefix + 'record-btn');
+    const iconEl = document.getElementById(prefix + 'rec-icon');
+
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaRec = new MediaRecorder(stream); audioChunks = []; recordSec = 0;
         mediaRec.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
-        mediaRec.onstop = () => { currentRecordedBlob = new Blob(audioChunks, { type: 'audio/webm' }); stream.getTracks().forEach(t => t.stop()); document.getElementById('rec-hint').textContent = `✅ 錄音完成 (${recordSec}秒)`; };
+        mediaRec.onstop = () => {
+            const blob = new Blob(audioChunks, { type: 'audio/webm' });
+            if (isCreation) {
+                creationRecordedBlob = blob;
+                creationRecordSec = recordSec;
+                document.getElementById('create-rec-preview').style.display = 'block';
+            } else {
+                currentRecordedBlob = blob;
+                const recPrev = document.getElementById('rec-preview');
+                if (recPrev) recPrev.style.display = 'block';
+            }
+            stream.getTracks().forEach(t => t.stop());
+            if (statusEl) statusEl.textContent = `✅ 錄音完成 (${recordSec}秒)`;
+        };
         mediaRec.start(); isRec = true;
-        document.getElementById('record-btn').classList.add('recording');
-        document.getElementById('rec-icon').className = 'ph-fill ph-stop';
-        document.getElementById('rec-hint').textContent = '錄音中…點擊停止';
-        recInt = setInterval(() => { recordSec++; document.getElementById('rec-timer').textContent = String(Math.floor(recordSec / 60)).padStart(2, '0') + ':' + String(recordSec % 60).padStart(2, '0'); if (recordSec >= 60) stopRec(); }, 1000);
+        if (btnEl) btnEl.classList.add('recording');
+        if (iconEl) iconEl.className = 'ph-fill ph-stop';
+        if (statusEl) statusEl.textContent = '錄音中…點擊停止';
+        recInt = setInterval(() => {
+            recordSec++;
+            if (timerEl) timerEl.textContent = String(Math.floor(recordSec / 60)).padStart(2, '0') + ':' + String(recordSec % 60).padStart(2, '0');
+            if (recordSec >= limit) stopRec(isCreation);
+        }, 1000);
     } catch (e) { showToast('無法存取麥克風'); console.error(e); }
 }
-function stopRec() { if (mediaRec && mediaRec.state !== 'inactive') mediaRec.stop(); isRec = false; clearInterval(recInt); document.getElementById('record-btn').classList.remove('recording'); document.getElementById('rec-icon').className = 'ph-fill ph-microphone'; }
+
+function stopRec(isCreation = false) {
+    if (mediaRec && mediaRec.state !== 'inactive') mediaRec.stop();
+    isRec = false; clearInterval(recInt);
+    const prefix = isCreation ? 'create-' : '';
+    const btnEl = document.getElementById(prefix + 'record-btn');
+    const iconEl = document.getElementById(prefix + 'rec-icon');
+    if (btnEl) btnEl.classList.remove('recording');
+    if (iconEl) iconEl.className = 'ph-fill ph-microphone';
+}
+
+// Dedicated helpers for task creation
+async function toggleTaskCreationRecording() { await toggleRecording(true); }
+
+function playRecordingPreview(isCreation = true) {
+    const blob = isCreation ? creationRecordedBlob : currentRecordedBlob;
+    if (!blob) return;
+    const url = URL.createObjectURL(blob);
+    const audio = new Audio(url);
+    audio.play().catch(e => console.error(e));
+}
+
+function clearRecording(isCreation = true) {
+    if (isCreation) {
+        creationRecordedBlob = null;
+        creationRecordSec = 0;
+        document.getElementById('create-rec-preview').style.display = 'none';
+        document.getElementById('create-rec-timer').textContent = '00:00';
+        document.getElementById('create-rec-status').textContent = '準備好後點擊錄音';
+    } else {
+        currentRecordedBlob = null;
+        document.getElementById('rec-preview').style.display = 'none';
+        document.getElementById('rec-timer').textContent = '00:00';
+        document.getElementById('rec-status').textContent = '準備好後點擊錄音';
+    }
+}
+
+function playTaskCreationPreview() { playRecordingPreview(true); }
+function clearTaskCreationRecording() { clearRecording(true); }
 
 function renderEchoPlayer(taskId) {
     const echo = globalData.echoes[taskId]; if (!echo) return;
@@ -1552,20 +1699,9 @@ function playEcho(tid) {
     curAudio.onended = () => { document.getElementById(`ew-${tid}`).classList.add('paused'); document.getElementById(`epi-${tid}`).className = 'ph-fill ph-play'; curAudio = null; };
 }
 
-function playEchoReward(tid) {
-    const echo = globalData.echoes[tid]; if (!echo || !echo.audio) { showToast('回聲未載入'); return; }
-    if (curAudio) { curAudio.pause(); curAudio = null; }
-    curAudio = new Audio(echo.audio);
-    showCelebration('🔊', '播放回聲中...', '專屬於你的神秘語音獎勵！');
-    curAudio.play().catch(e => console.error(e));
-    curAudio.onended = () => {
-        curAudio = null;
-        globalData.echoes[tid].listened = true; // Mark as opened
-        saveGlobal();
-        renderRewards(); // Refresh to hide the box
-        showToast('神秘寶箱已聆聽完畢！');
-    };
-}
+
+// playEchoReward removed - feature deleted
+
 
 // ===== UI HELPERS =====
 let toastTmr;
@@ -1610,7 +1746,6 @@ function startDailyBattle() {
     const a = me(); if (!a) return;
     const layer = (a.battlesWon || 0) + 1;
     const m = getCurrentBoss(layer);
-    const c = a.character;
 
     const pStats = getPlayerStats(a);
     const pMaxHp = 100 + a.level * 10 + (pStats.def * 2);
@@ -1639,7 +1774,7 @@ function startDailyBattle() {
     // Render battle screen
     document.getElementById('bm-sprite').textContent = m.emoji;
     document.getElementById('bm-name').textContent = `Lv.${layer} ${m.name}`;
-    document.getElementById('bp-sprite').innerHTML = getCharImg(c, 56);
+    document.getElementById('bp-sprite').innerHTML = getCharImg(c, 56, a.level);
     document.getElementById('bp-name').textContent = a.name;
     updateBattleUI();
     showScreen('screen-battle');
@@ -1715,7 +1850,6 @@ function updatePersistentHp() {
 
 function battleAttack() {
     if (!battleState || battleState.done) return;
-    SoundManager.play('attack');
     const bs = battleState;
     const dmg = Math.floor(bs.player.atk * (0.8 + Math.random() * 0.4));
     bs.monster.curHp -= dmg;
@@ -1729,39 +1863,35 @@ function battleAttack() {
     updateBattleUI();
 }
 
-function getFunnySkillName(charId) {
-    const classSkills = {
-        'char0': ['💥 鍵盤重擊', '💥 咖啡因爆發', '💥 無情複製貼上', '💥 Deadline死線閃電'], // 冒險者
-        'char1': ['💥 隨便念個咒語', '💥 好像是火球術', '💥 把怪物變冰紅茶', '💥 鴿子封包召喚'], // 法師
-        'char2': ['💥 瞎貓死耗子劍法', '💥 旋風斬(會頭暈)', '💥 大聲咆哮', '💥 拿劍柄打臉'], // 戰士
-        'char3': ['💥 閉著眼睛亂射', '💥 射中怪物膝蓋', '💥 萬劍歸宗(純特效)', '💥 撒石灰粉'], // 弓箭手
-        'char-cat': ['💥 喵喵無影拳', '💥 抓花了臉', '💥 推倒桌上水杯', '💥 半夜跑酷撞擊'], // 喵殺手
-        'char-dog': ['💥 終極拆家旋風', '💥 死咬拖鞋不放', '💥 無辜眼神攻擊', '💥 快樂搖尾巴拍擊'], // 汪騎士
-        'char-slime': ['💥 祖傳黏液束縛', '💥 彈性肉彈衝撞', '💥 分裂再分裂', '💥 亂噴酸液'] // 史萊姆
-    };
-    const defaultSkills = ['💥 認真的一擊', '💥 閉眼亂打', '💥 大喊救命', '💥 華麗的摔倒'];
-    const pool = classSkills[charId] || defaultSkills;
+function getFunnySkillName() {
+    const pool = [
+        '💥 瞎貓死耗子劍法', '💥 旋風斬(會頭暈)', '💥 大聲咆哮', '💥 拿劍柄打臉',
+        '💥 隨便念個咒語', '💥 好像是火球術', '💥 把怪物變冰紅茶', '💥 鴿子封包召喚',
+        '💥 閉著眼睛亂射', '💥 射中怪物膝蓋', '💥 萬劍歸宗(純特效)', '💥 撒石灰粉',
+        '💥 愛的抱抱', '💥 閃亮亮攻擊', '💥 超級溫柔的拍打',
+        '💥 認真的一擊', '💥 閉眼亂打', '💥 大喊救命', '💥 華麗的摔倒'
+    ];
     return pool[Math.floor(Math.random() * pool.length)];
 }
 
 function battleSkill() {
     if (!battleState || battleState.done || battleState.player.skillUsed) return;
     const a = me();
-    SoundManager.play('skill');
     const bs = battleState;
     bs.player.skillUsed = true;
     const dmg = Math.floor(bs.player.atk * 2.5);
     bs.monster.curHp -= dmg;
 
-    const skillName = getFunnySkillName(a ? a.charId : 'char0');
-    bs.log.push(`<span class="log-skill">${skillName}！造成 ${dmg} 暴擊傷害！</span>`);
+    const skillName = getFunnySkillName();
+    bs.log.push(`<span class="log-skill">🌟 使用技能！ ${skillName}！造成 ${dmg} 傷害！</span>`);
 
     updatePersistentHp();
     rushAnim('bp-sprite');
+
     shakeElement('bm-sprite');
     hurtFlash('bm-sprite');
     spawnDmgFloat('monster-area', `-${dmg}`, 'crit');
-    if (bs.monster.curHp <= 0) { battleWin(); } else { setTimeout(() => { monsterTurn(); updateBattleUI(); }, 600); }
+    if (bs.monster.curHp <= 0) { battleWin(); } else { setTimeout(() => { monsterTurn(); updateBattleUI(); }, 1000); }
     updateBattleUI();
 }
 
@@ -1771,7 +1901,6 @@ function battleHeal() {
         if (!a || (a.potions || 0) <= 0) showToast('沒有治療藥水了！請去幸運轉盤或寶庫獲取。');
         return;
     }
-    SoundManager.play('heal');
     const bs = battleState;
     a.potions--;
     saveGlobal();
@@ -1792,7 +1921,6 @@ function monsterTurn() {
 
     // 30% chance to use Boss Skill if layer >= 3
     if (bs.layer >= 3 && Math.random() < 0.3) {
-        SoundManager.play('skill');
         let dmg = Math.floor(bs.monster.atk * 1.8);
         dmg = Math.max(1, dmg - Math.floor(bs.player.def / 2));
         bs.player.hp -= dmg;
@@ -1801,7 +1929,6 @@ function monsterTurn() {
         shakeElement('bp-sprite');
         spawnDmgFloat('player-area', `-${dmg}`, 'crit');
     } else {
-        SoundManager.play('attack');
         let dmg = Math.floor(bs.monster.atk * (0.8 + Math.random() * 0.4));
         dmg = Math.max(1, dmg - Math.floor(bs.player.def / 2)); // Player Defense mitigates damage
         bs.player.hp -= dmg;
@@ -1831,12 +1958,15 @@ function battleWin() {
     if (a.level > oldLvl) a.currentHp = 100 + a.level * 10 + (bs.player.def * 2); // Free heal on level up
     saveGlobal(); checkAchievements();
 
-    bs.log.push(`<span class="log-win">🎉 擊敗了第 ${bs.layer} 層魔王！獲得 +${xpGain} XP · +${ptsGain} 點！</span>`);
-    if (a.level > oldLvl) {
-        const newClass = getClassName(a.level, a.character);
-        bs.log.push(`<span class="log-win">🎊 升級！→ Lv.${a.level} ${newClass}，血量全滿！</span>`);
+    bs.log.push(`<span class="log-win">🎉 擊敗了第 ${bs.layer} 層魔王！獲得 +${xpGain} XP · +${ptsGain} 金幣！</span>`);
+    const oldClass = getClassName(oldLvl);
+    const newClass = getClassName(a.level);
+    if (newClass !== oldClass) {
+        saveGlobal();
+        showCelebration('🎊', '職業晉升！', `你現在是 ${newClass}！`);
+    } else {
+        saveGlobal();
     }
-
     bs.log.push(`<span class="log-win" style="color:var(--orange)">⚠️ 通往下一層的門開啟中...</span>`);
     setTimeout(() => { showCelebration('🏆', '戰鬥勝利！', `前進下一層...`); }, 500);
     setTimeout(() => {
@@ -1854,7 +1984,7 @@ function battleLose() {
     const a = me();
     checkAchievements();
     bs.log.push(`<span class="log-enemy">💔 戰敗了…你的血量歸零了。</span>`);
-    bs.log.push(`<span class="log-enemy">請至獎勵商城使用點數購買「治療藥水」，或透過完成任務升級來恢復血量！</span>`);
+    bs.log.push(`<span class="log-enemy">請至王國祕寶閣使用金幣購買「治療藥水」，或透過達成委託升級來恢復血量！</span>`);
 }
 
 function exitBattle() {
@@ -1889,11 +2019,7 @@ function hurtFlash(id) {
     setTimeout(() => el.classList.remove('monster-hurt'), 400);
 }
 // ===== UTILS =====
-function getCharImg(cId, size) {
-    const c = CHARACTERS.find(x => x.id === cId);
-    if (!c) return '🧙';
-    return `<img src="${c.transparentImg || c.img}" style="width:${size}px;height:${size}px;border-radius:50%;object-fit:contain; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.4));">`;
-}
+// getCharImg consolidated above
 
 function esc(s) {
     if (!s) return '';
@@ -1909,34 +2035,14 @@ function showToast(msg) {
     setTimeout(() => { b.classList.remove('show'); setTimeout(() => b.remove(), 300); }, 3000);
 }
 
-// ===== BACKGROUND REMOVAL (Imgly) =====
-async function initTransparentCharacters() {
-    if (typeof imglyRemoveBackground === 'undefined') return;
 
-    // We only process them once and store the blob URL in memory
-    for (let c of CHARACTERS) {
-        if (!c.img || c.transparentImg) continue;
+// BACKGROUND REMOVAL logic is now handled in handleAvatarUpload
 
-        try {
-            console.log(`Processing background removal for ${c.name}...`);
-            const blob = await imglyRemoveBackground(c.img);
-            c.transparentImg = URL.createObjectURL(blob);
-
-            // Re-render components if needed now that transparent version is ready
-            if (document.getElementById('screen-charselect') && !document.getElementById('screen-charselect').classList.contains('hidden')) {
-                renderCharGrid();
-            }
-            refreshAll();
-        } catch (e) {
-            console.error("Failed to remove background for " + c.id, e);
-        }
-    }
-}
 
 // Start processing slightly after load to not block UI
 setTimeout(() => {
-    initTransparentCharacters();
-}, 1000);
+    // initTransparentCharacters removed - handled on upload
+}, 200);
 function spawnDmgFloat(areaId, text, type) {
     const area = document.getElementById(areaId);
     if (!area) return;
@@ -1952,14 +2058,14 @@ function spawnDmgFloat(areaId, text, type) {
 
 // ===== LUCKY WHEEL =====
 const WHEEL_PRIZES = [
-    { label: '+10 點數', icon: '💰', action: a => { a.points += 10; } },
+    { label: '+10 金幣', icon: '💰', action: a => { a.points += 10; } },
     { label: '+1 治療藥水', icon: '🧪', action: a => { a.potions = (a.potions || 0) + 1; } },
-    { label: '+5 點數', icon: '🪙', action: a => { a.points += 5; } },
+    { label: '+5 金幣', icon: '🪙', action: a => { a.points += 5; } },
     { label: '+30 XP', icon: '🔥', action: a => { a.totalXP += 30; a.level = calcLevel(a.totalXP); } },
     { label: '再轉一次', icon: '🌀', action: () => { } },
     { label: '+2 治療藥水', icon: '🧪', action: a => { a.potions = (a.potions || 0) + 2; } },
     { label: '+50 XP', icon: '💎', action: a => { a.totalXP += 50; a.level = calcLevel(a.totalXP); } },
-    { label: '+25 點數', icon: '🏆', action: a => { a.points += 25; } },
+    { label: '+25 金幣', icon: '🏆', action: a => { a.points += 25; } },
 ];
 const WHEEL_COLORS = ['#FF6B00', '#7C5CFC', '#39FF14', '#FF3860', '#FFD700', '#00E5FF', '#FF6EB4', '#B0A0D0'];
 let wheelSpinning = false;
@@ -2161,7 +2267,7 @@ function renderDashboard(period) {
     document.getElementById('dash-summary').innerHTML = `
         <div class="dash-stat stat-done"><span class="ds-val">${done.length}</span><span class="ds-label">✅ 完成</span></div>
         <div class="dash-stat stat-fail"><span class="ds-val">${failed.length}</span><span class="ds-label">❌ 失敗</span></div>
-        <div class="dash-stat stat-total"><span class="ds-val">${total}</span><span class="ds-label">📋 總任務</span></div>
+        <div class="dash-stat stat-total"><span class="ds-val">${total}</span><span class="ds-label">📋 總委託</span></div>
     `;
     // Type breakdown
     const typeCount = {};
@@ -2201,10 +2307,10 @@ function getAIComment(done, failed, total, typeCount, period) {
     if (total === 0) {
         const idle = [
             `${periodName}你完全沒動耶…是在練習「忍術：完全隱身」嗎？🥷`,
-            `${periodName}零任務？你是不是把冒險當觀光在玩？📸`,
-            `任務板空空如也，連史萊姆看了都替你著急 🟢💦`,
-            `${periodName}的任務數量跟我銀行餘額一樣——零 😭`,
-            `勇者大人，${periodName}休息夠了吧？該出門打怪了！⚔️`,
+            `${periodName}零委託？你是不是把冒險當觀光在玩？📸`,
+            `委託板空空如也，連史萊姆看了都替你著急 🟢💦`,
+            `${periodName}的委託數量跟我銀行餘額一樣——零 😭`,
+            `勇者大人，${periodName}休息夠了吧？該出門冒險了！⚔️`,
         ];
         return idle[Math.floor(Math.random() * idle.length)];
     }
@@ -2214,7 +2320,7 @@ function getAIComment(done, failed, total, typeCount, period) {
             `${periodName}全部完成！你是不是開了外掛？🤖💯`,
             `100% 完成率！你媽看到一定超驕傲 👩‍👧‍👦✨`,
             `完美表現！這個勇者有前途，連魔王都要怕 🐲💀`,
-            `${periodName}根本是任務粉碎機，給你跪了 🧎‍♂️`,
+            `${periodName}根本是委託粉碎機，給你跪了 🧎‍♂️`,
             `全滿！廢話不多說，直接封你為「${periodName}MVP」🏆`,
             `太猛了吧！你的完成率比珍珠奶茶的珍珠還要滿 🧋`,
         ];
@@ -2224,20 +2330,20 @@ function getAIComment(done, failed, total, typeCount, period) {
     if (failed > done && total > 0) {
         const oof = [
             `${periodName}失敗比完成多…沒關係，失敗為成功之母，你媽一定也這樣說 👩`,
-            `戰績有點慘烈，但至少你有勇氣接任務！比待在村子裡的NPC強多了 🏠`,
-            `嗯…成績不太好看，但沒關係，連林書豪也有低潮期 🏀`,
-            `${periodName}有點卡關齁？建議你先從簡單任務開始，打怪也要循序漸進 📈`,
+            `戰績有點慘烈，但至少你有勇氣接委託！比待在村子裡的NPC強多了 🏠`,
+            `嗯…成績不太好看，但沒關係，連傳奇冒險者也有低潮期 🛡️`,
+            `${periodName}有點卡關齁？建議你從簡單委託開始，冒險也要循序漸進 📈`,
         ];
         return oof[Math.floor(Math.random() * oof.length)];
     }
     // Some mix
     const rate = total > 0 ? Math.round(done / total * 100) : 0;
     const mixed = [
-        `${periodName}完成 ${done} 個任務，完成率 ${rate}%，跟段考成績差不多嘛 📝`,
-        `${rate}% 完成率！不算差，但離「台積電等級」還有一段距離 🏭`,
-        `做了 ${done} 個任務，CP值不錯👍 下次目標：打敗自己的紀錄！`,
-        `${periodName}的表現就像鹹酥雞——外表普通但其實蠻好吃的 🍗`,
-        `完成了 ${done}/${total} 個任務。嗯，有進步的空間，就像手搖飲的甜度一樣可以調 🧋`,
+        `${periodName}達成 ${done} 個委託，完成率 ${rate}%，跟冒險執照考試成績差不多嘛 📝`,
+        `${rate}% 完成率！不算差，但離「傳奇冒險者」還有一段距離 🏰`,
+        `執行了 ${done} 個委託，CP值不錯👍 下次目標：打敗自己的紀錄！`,
+        `${periodName}的表現就像冒險者酒館的燉菜——外表普通但其實蠻飽滿的 🍲`,
+        `達成了 ${done}/${total} 個委託。嗯，有進步的空間，就像冒險地圖的甜度一樣可以調 🗺️`,
         `${rate}%！勇者的道路本來就不容易，至少你沒放棄 💪`,
     ];
     // Bonus for specific types
@@ -2252,13 +2358,13 @@ function getAIComment(done, failed, total, typeCount, period) {
     });
 
     if (bestType === 'KINDNESS') {
-        mixed.push(`✨ 善良值 MAX！你做了 ${highestCount} 個善行任務，這世界的發電機都是靠你發電的吧？🌈`);
+        mixed.push(`✨ 善良值 MAX！你做了 ${highestCount} 個善行委託，這世界的發電機都是靠你發電的吧？🌈`);
     } else if (bestType === 'ADVENTURE') {
-        mixed.push(`✨ 出門冒險了 ${highestCount} 次！我看連Google Map都要來找你更新圖資了 🗺️🚶`);
+        mixed.push(`✨ 出門冒險了 ${highestCount} 次！我看連冒險者地圖都要來找你更新圖資了 🗺️🚶`);
     } else if (bestType === 'LEARNING') {
-        mixed.push(`✨ 學了 ${highestCount} 個知識挑戰！這個腦容量，台積電人資正在看你的履歷 📶🧠`);
+        mixed.push(`✨ 學了 ${highestCount} 個知識挑戰！這個腦容量，賢者議會正在看你的履歷 📶🧠`);
     } else if (bestType === 'CHORE') {
-        mixed.push(`✨ 挖！完成了 ${highestCount} 個家事任務！家裡乾淨到蟑螂都要滑倒了🧹✨`);
+        mixed.push(`✨ 挖！達成了 ${highestCount} 個領地維護委託！家裡乾淨到蟑螂都要滑倒了🧹✨`);
     } else if (bestType === 'CREATIVE') {
         mixed.push(`✨ 發揮了 ${highestCount} 次創意！達文西都要認你做乾爹了 🎨💡`);
     }
@@ -2455,6 +2561,10 @@ function openGuildDashboard() {
         openGuildJoinScreen();
         return;
     }
+    // Update terminology for Guild prompt if it's reused
+    document.getElementById('gm-title').textContent = '🏰 加入公會冒險';
+    document.getElementById('gm-desc').textContent = '成為公會成員，你可以領取來自領主 (發布者) 的委託，並獲得公會獎勵！';
+
     renderGuildDashboard();
     showScreen('screen-guild');
 }
@@ -2644,13 +2754,8 @@ function editMemberRole(memberId) {
     document.getElementById('modal-guild-edit').style.display = 'flex';
 }
 
-// --- Helper: get character emoji for guild display ---
 function getCharEmojiForGuild(acc) {
-    if (!acc || !acc.character) return '🧙';
-    const c = CHARACTERS.find(x => x.id === acc.character);
-    if (!c) return '🧙';
-    const tier = c.tiers ? c.tiers.find(t => acc.level >= t.lvl) : null;
-    return tier ? tier.emoji : c.emoji;
+    return '🧙';
 }
 
 // --- Update refreshProfile to show guild info in menu ---
@@ -2672,7 +2777,9 @@ refreshProfile = function () {
 // --- Intercept claimTask to require guild ---
 const _originalClaimTask = claimTask;
 claimTask = function (id) {
-    if (!requireGuild('接取任務')) return;
+    const t = globalData.tasks.find(x => x.id === id);
+    const isMine = t && t.creatorId === myId();
+    if (!isMine && !requireGuild('接取任務')) return;
     _originalClaimTask(id);
 };
 
