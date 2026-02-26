@@ -2509,73 +2509,71 @@ function doJoinGuild() {
         found.members.push({
             id: myId(), name: a.name, emoji: getCharEmojiForGuild(a), roleTitle: '成員'
         });
-        a.guildId = found.id;
+        saveGlobal();
+        refreshAll();
+        SoundManager.play('levelUp');
+        showCelebration('🎉', '成功加入公會！', `歡迎加入「${getMyGuild().name}」`);
+        setTimeout(() => {
+            openGuildDashboard();
+        }, 2600);
     }
 
-    saveGlobal();
-    SoundManager.play('levelUp');
-    showCelebration('🎉', '成功加入公會！', `歡迎加入「${getMyGuild().name}」`);
-    setTimeout(() => {
-        openGuildDashboard();
-    }, 2600);
-}
+    // --- Leave Guild ---
+    function doLeaveGuild() {
+        const a = me(); if (!a || !a.guildId) return;
+        const g = getMyGuild();
+        if (!g) { a.guildId = null; saveGlobal(); return; }
 
-// --- Leave Guild ---
-function doLeaveGuild() {
-    const a = me(); if (!a || !a.guildId) return;
-    const g = getMyGuild();
-    if (!g) { a.guildId = null; saveGlobal(); return; }
+        const isOwner = g.ownerId === myId();
+        let msg = '確定要退出公會嗎？';
+        if (isOwner && g.members.length > 1) {
+            msg = '你是會長！退出公會將解散公會，所有成員都會被移除。確定嗎？';
+        }
 
-    const isOwner = g.ownerId === myId();
-    let msg = '確定要退出公會嗎？';
-    if (isOwner && g.members.length > 1) {
-        msg = '你是會長！退出公會將解散公會，所有成員都會被移除。確定嗎？';
+        if (!confirm(msg)) return;
+
+        if (isOwner) {
+            // Disband: remove guild from all members
+            const guilds = getGuilds();
+            g.members.forEach(m => {
+                const acc = globalData.accounts[m.id];
+                if (acc) acc.guildId = null;
+            });
+            delete guilds[g.id];
+        } else {
+            // Just remove self
+            g.members = g.members.filter(m => m.id !== myId());
+        }
+        a.guildId = null;
+        saveGlobal();
+        showToast('已退出公會');
+        showScreen('screen-character');
+        refreshProfile();
     }
 
-    if (!confirm(msg)) return;
+    // --- Guild Dashboard ---
+    function openGuildDashboard() {
+        const a = me(); if (!a) return;
+        if (!a.guildId || !getMyGuild()) {
+            // No guild, open join screen
+            openGuildJoinScreen();
+            return;
+        }
+        // Update terminology for Guild prompt if it's reused
+        document.getElementById('gm-title').textContent = '🏰 加入公會冒險';
+        document.getElementById('gm-desc').textContent = '成為公會成員，你可以領取來自領主 (發布者) 的委託，並獲得公會獎勵！';
 
-    if (isOwner) {
-        // Disband: remove guild from all members
-        const guilds = getGuilds();
-        g.members.forEach(m => {
-            const acc = globalData.accounts[m.id];
-            if (acc) acc.guildId = null;
-        });
-        delete guilds[g.id];
-    } else {
-        // Just remove self
-        g.members = g.members.filter(m => m.id !== myId());
+        renderGuildDashboard();
+        showScreen('screen-guild');
     }
-    a.guildId = null;
-    saveGlobal();
-    showToast('已退出公會');
-    showScreen('screen-character');
-    refreshProfile();
-}
 
-// --- Guild Dashboard ---
-function openGuildDashboard() {
-    const a = me(); if (!a) return;
-    if (!a.guildId || !getMyGuild()) {
-        // No guild, open join screen
-        openGuildJoinScreen();
-        return;
-    }
-    // Update terminology for Guild prompt if it's reused
-    document.getElementById('gm-title').textContent = '🏰 加入公會冒險';
-    document.getElementById('gm-desc').textContent = '成為公會成員，你可以領取來自領主 (發布者) 的委託，並獲得公會獎勵！';
+    function renderGuildDashboard() {
+        const g = getMyGuild();
+        if (!g) return;
+        const isOwner = g.ownerId === myId();
+        const container = document.getElementById('guild-dashboard-content');
 
-    renderGuildDashboard();
-    showScreen('screen-guild');
-}
-
-function renderGuildDashboard() {
-    const g = getMyGuild();
-    if (!g) return;
-    const isOwner = g.ownerId === myId();
-    const container = document.getElementById('guild-dashboard-content');
-
-    container.innerHTML = `
+        container.innerHTML = `
         <!-- Guild Header -->
         <div class="guild-header-card">
             <div class="guild-icon-big">${g.icon}</div>
@@ -2619,24 +2617,24 @@ function renderGuildDashboard() {
             </button>
         </div>
     `;
-}
+    }
 
-function renderGuildMemberCard(member, isOwner, guild) {
-    const isSelf = member.id === myId();
-    const isThisOwner = member.id === guild.ownerId;
-    let roleBadgeClass = 'member';
-    let roleLabel = member.roleTitle || '成員';
-    if (isThisOwner) { roleBadgeClass = 'owner'; roleLabel = member.roleTitle || '會長'; }
-    else if (roleLabel === '副會長') { roleBadgeClass = 'vice'; }
+    function renderGuildMemberCard(member, isOwner, guild) {
+        const isSelf = member.id === myId();
+        const isThisOwner = member.id === guild.ownerId;
+        let roleBadgeClass = 'member';
+        let roleLabel = member.roleTitle || '成員';
+        if (isThisOwner) { roleBadgeClass = 'owner'; roleLabel = member.roleTitle || '會長'; }
+        else if (roleLabel === '副會長') { roleBadgeClass = 'vice'; }
 
-    const editBtn = (isOwner && !isSelf) ? `
+        const editBtn = (isOwner && !isSelf) ? `
         <button style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px;padding:4px;"
                 onclick="editMemberRole('${member.id}')">
             <i class="ph-bold ph-pencil-simple"></i>
         </button>
     ` : '';
 
-    return `
+        return `
         <div class="guild-member-card">
             <div class="guild-member-avatar">${member.emoji || '🧙'}</div>
             <div class="guild-member-info">
@@ -2648,84 +2646,84 @@ function renderGuildMemberCard(member, isOwner, guild) {
             ${editBtn}
         </div>
     `;
-}
+    }
 
-function copyGuildCode(code) {
-    navigator.clipboard.writeText(code).then(() => showToast('邀請碼已複製！')).catch(() => showToast(`邀請碼：${code}`));
-}
+    function copyGuildCode(code) {
+        navigator.clipboard.writeText(code).then(() => showToast('邀請碼已複製！')).catch(() => showToast(`邀請碼：${code}`));
+    }
 
-// --- Guild Editing (Owner only) ---
-function closeGuildEditModal() {
-    document.getElementById('modal-guild-edit').style.display = 'none';
-}
+    // --- Guild Editing (Owner only) ---
+    function closeGuildEditModal() {
+        document.getElementById('modal-guild-edit').style.display = 'none';
+    }
 
-function editGuildName() {
-    if (!isGuildOwner()) return;
-    const g = getMyGuild();
-    document.getElementById('guild-edit-modal-title').textContent = '修改公會名稱';
-    document.getElementById('guild-edit-modal-body').innerHTML = `
+    function editGuildName() {
+        if (!isGuildOwner()) return;
+        const g = getMyGuild();
+        document.getElementById('guild-edit-modal-title').textContent = '修改公會名稱';
+        document.getElementById('guild-edit-modal-body').innerHTML = `
         <div class="form-group" style="margin-bottom:0;">
             <label>新名稱</label>
             <input id="guild-edit-name-input" value="${esc(g.name)}" maxlength="20" placeholder="輸入新的公會名稱">
         </div>
     `;
-    const btn = document.getElementById('guild-edit-confirm-btn');
-    btn.onclick = () => {
-        const newName = document.getElementById('guild-edit-name-input').value.trim();
-        if (!newName || newName.length < 2) { showToast('名稱至少需要 2 個字！'); return; }
-        g.name = newName;
-        saveGlobal();
-        closeGuildEditModal();
-        renderGuildDashboard();
-        showToast('公會名稱已更新！');
-    };
-    document.getElementById('modal-guild-edit').style.display = 'flex';
-}
+        const btn = document.getElementById('guild-edit-confirm-btn');
+        btn.onclick = () => {
+            const newName = document.getElementById('guild-edit-name-input').value.trim();
+            if (!newName || newName.length < 2) { showToast('名稱至少需要 2 個字！'); return; }
+            g.name = newName;
+            saveGlobal();
+            closeGuildEditModal();
+            renderGuildDashboard();
+            showToast('公會名稱已更新！');
+        };
+        document.getElementById('modal-guild-edit').style.display = 'flex';
+    }
 
-function editGuildIcon() {
-    if (!isGuildOwner()) return;
-    const g = getMyGuild();
-    selectedGuildIcon = g.icon;
-    document.getElementById('guild-edit-modal-title').textContent = '更換公會圖示';
-    document.getElementById('guild-edit-modal-body').innerHTML = `
+    function editGuildIcon() {
+        if (!isGuildOwner()) return;
+        const g = getMyGuild();
+        selectedGuildIcon = g.icon;
+        document.getElementById('guild-edit-modal-title').textContent = '更換公會圖示';
+        document.getElementById('guild-edit-modal-body').innerHTML = `
         <div class="guild-icon-grid" id="guild-edit-icon-grid"></div>
     `;
-    // Render icons in the edit modal
-    const grid = document.getElementById('guild-edit-icon-grid');
-    grid.innerHTML = GUILD_ICONS.map(icon => `
+        // Render icons in the edit modal
+        const grid = document.getElementById('guild-edit-icon-grid');
+        grid.innerHTML = GUILD_ICONS.map(icon => `
         <div class="guild-icon-option${icon === selectedGuildIcon ? ' selected' : ''}"
              onclick="selectEditGuildIcon('${icon}')">${icon}</div>
     `).join('');
-    const btn = document.getElementById('guild-edit-confirm-btn');
-    btn.onclick = () => {
-        g.icon = selectedGuildIcon;
-        saveGlobal();
-        closeGuildEditModal();
-        renderGuildDashboard();
-        showToast('公會圖示已更新！');
-    };
-    document.getElementById('modal-guild-edit').style.display = 'flex';
-}
+        const btn = document.getElementById('guild-edit-confirm-btn');
+        btn.onclick = () => {
+            g.icon = selectedGuildIcon;
+            saveGlobal();
+            closeGuildEditModal();
+            renderGuildDashboard();
+            showToast('公會圖示已更新！');
+        };
+        document.getElementById('modal-guild-edit').style.display = 'flex';
+    }
 
-function selectEditGuildIcon(icon) {
-    selectedGuildIcon = icon;
-    const grid = document.getElementById('guild-edit-icon-grid');
-    if (grid) {
-        grid.innerHTML = GUILD_ICONS.map(i => `
+    function selectEditGuildIcon(icon) {
+        selectedGuildIcon = icon;
+        const grid = document.getElementById('guild-edit-icon-grid');
+        if (grid) {
+            grid.innerHTML = GUILD_ICONS.map(i => `
             <div class="guild-icon-option${i === selectedGuildIcon ? ' selected' : ''}"
                  onclick="selectEditGuildIcon('${i}')">${i}</div>
         `).join('');
+        }
     }
-}
 
-function editMemberRole(memberId) {
-    if (!isGuildOwner()) return;
-    const g = getMyGuild();
-    const member = g.members.find(m => m.id === memberId);
-    if (!member) return;
+    function editMemberRole(memberId) {
+        if (!isGuildOwner()) return;
+        const g = getMyGuild();
+        const member = g.members.find(m => m.id === memberId);
+        if (!member) return;
 
-    document.getElementById('guild-edit-modal-title').textContent = `設定「${member.name}」的職稱`;
-    document.getElementById('guild-edit-modal-body').innerHTML = `
+        document.getElementById('guild-edit-modal-title').textContent = `設定「${member.name}」的職稱`;
+        document.getElementById('guild-edit-modal-body').innerHTML = `
         <div class="form-group" style="margin-bottom:8px;">
             <label>職稱</label>
             <input id="guild-edit-role-input" value="${esc(member.roleTitle || '成員')}" maxlength="10" placeholder="例：副會長、魔法顧問">
@@ -2741,51 +2739,52 @@ function editMemberRole(memberId) {
                     onclick="document.getElementById('guild-edit-role-input').value='任務專員'">任務專員</button>
         </div>
     `;
-    const btn = document.getElementById('guild-edit-confirm-btn');
-    btn.onclick = () => {
-        const newRole = document.getElementById('guild-edit-role-input').value.trim();
-        if (!newRole) { showToast('請輸入職稱！'); return; }
-        member.roleTitle = newRole;
-        saveGlobal();
-        closeGuildEditModal();
-        renderGuildDashboard();
-        showToast(`已將「${member.name}」的職稱設為「${newRole}」`);
-    };
-    document.getElementById('modal-guild-edit').style.display = 'flex';
-}
-
-function getCharEmojiForGuild(acc) {
-    return '🧙';
-}
-
-// --- Update refreshProfile to show guild info in menu ---
-const _originalRefreshProfile = refreshProfile;
-refreshProfile = function () {
-    _originalRefreshProfile();
-    const a = me(); if (!a) return;
-    const label = document.getElementById('menu-guild-label');
-    if (label) {
-        const g = getMyGuild();
-        if (g) {
-            label.innerHTML = `<span style="color:var(--primary);font-weight:800;">${g.icon} ${esc(g.name)}</span> <i class="ph ph-caret-right"></i>`;
-        } else {
-            label.innerHTML = '尚未加入 <i class="ph ph-caret-right"></i>';
-        }
+        const btn = document.getElementById('guild-edit-confirm-btn');
+        btn.onclick = () => {
+            const newRole = document.getElementById('guild-edit-role-input').value.trim();
+            if (!newRole) { showToast('請輸入職稱！'); return; }
+            member.roleTitle = newRole;
+            saveGlobal();
+            closeGuildEditModal();
+            renderGuildDashboard();
+            showToast(`已將「${member.name}」的職稱設為「${newRole}」`);
+        };
+        document.getElementById('modal-guild-edit').style.display = 'flex';
     }
-};
 
-// --- Intercept claimTask to require guild ---
-const _originalClaimTask = claimTask;
-claimTask = function (id) {
-    const t = globalData.tasks.find(x => x.id === id);
-    const isMine = t && t.creatorId === myId();
-    if (!isMine && !requireGuild('接取任務')) return;
-    _originalClaimTask(id);
-};
+    function getCharEmojiForGuild(acc) {
+        return '🧙';
+    }
 
-// --- Intercept redeemReward to require guild ---
-const _originalRedeemReward = redeemReward;
-redeemReward = function (sku) {
-    if (!requireGuild('兌換獎勵')) return;
-    _originalRedeemReward(sku);
-};
+    // --- Update refreshProfile to show guild info in menu ---
+    const _originalRefreshProfile = refreshProfile;
+    refreshProfile = function () {
+        _originalRefreshProfile();
+        const a = me(); if (!a) return;
+        const label = document.getElementById('menu-guild-label');
+        if (label) {
+            const g = getMyGuild();
+            if (g) {
+                label.innerHTML = `<span style="color:var(--primary);font-weight:800;">${g.icon} ${esc(g.name)}</span> <i class="ph ph-caret-right"></i>`;
+            } else {
+                label.innerHTML = '尚未加入 <i class="ph ph-caret-right"></i>';
+            }
+        }
+    };
+
+    // --- Intercept claimTask to require guild ---
+    const _originalClaimTask = claimTask;
+    claimTask = function (id) {
+        const t = globalData.tasks.find(x => x.id === id);
+        const isMine = t && t.creatorId === myId();
+        if (!isMine && !requireGuild('接取任務')) return;
+        _originalClaimTask(id);
+    };
+
+    // --- Intercept redeemReward to require guild ---
+    const _originalRedeemReward = redeemReward;
+    redeemReward = function (sku) {
+        if (!requireGuild('兌換獎勵')) return;
+        _originalRedeemReward(sku);
+    };
+ });
