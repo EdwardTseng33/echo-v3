@@ -488,11 +488,14 @@ function getCharEmoji(charDef, level) {
 }
 const DEFAULT_AVATAR = 'img/chars/mage.png';
 
-function getCharImg(charDef, size = 48, level = 1, isAnimated = true) {
+function getCharImg(charDef, size = 48, level = 1, isAnimated = true, variant = 'avatar') {
     const a = typeof charDef === 'string' ? globalData.accounts[charDef] : charDef;
     const src = (a && a.avatarUrl) ? a.avatarUrl : DEFAULT_AVATAR;
     const animClass = isAnimated ? 'avatar-animated' : '';
-    return `<img src="${src}" class="${animClass}" style="width:${size}px;height:${size}px;object-fit:contain; border-radius:50%">`;
+    if (variant === 'hero') {
+        return `<img src="${src}" class="${animClass} char-hero-image" id="hero-img-main">`;
+    }
+    return `<img src="${src}" class="${animClass} char-avatar-img" style="width:${size}px;height:${size}px;object-fit:contain;border-radius:50%">`;
 }
 function getClassName(level, char) {
     let cls = CLASS_PATH[0];
@@ -709,30 +712,28 @@ function refreshProfile() {
     const tierIdx = getCharTier(a.level);
     const stats = getPlayerStats(a);
 
-    const bigEl = document.getElementById('prof-char');
+    const heroEl = document.getElementById('prof-hero-render-target');
     const bubbleEl = document.getElementById('prof-char-bubble');
-    if (bigEl) {
-        bigEl.innerHTML = getCharImg(a, 130, a.level, false);
-        bigEl.className = 'char-big';
-        bigEl.style.cursor = 'pointer';
-        bigEl.onclick = () => {
+    if (heroEl) {
+        heroEl.innerHTML = getCharImg(a, 0, a.level, false, 'hero');
+        heroEl.style.cursor = 'pointer';
+        heroEl.onclick = (e) => {
+            e.stopPropagation(); // Avoid triggering file input
             const quote = ADVENTURE_QUOTES[Math.floor(Math.random() * ADVENTURE_QUOTES.length)];
-            charTalk(quote, 'prof-char', 'prof-char-bubble');
+            charTalk(quote, 'prof-hero-render-target', 'prof-char-bubble');
         };
+
+        // Show pet icons overlay if any
+        if (stats.pets && stats.pets.length > 0) {
+            const petsHtml = stats.pets.map((p, i) => `<div style="position:absolute; bottom:${-10 + i * 15}px; right:${-10 - i * 5}px; font-size:24px; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5)); animation: charFloat ${2 + i * 0.5}s ease-in-out infinite;">${p.emoji}</div>`).join('');
+            heroEl.innerHTML += petsHtml;
+        }
     }
 
-    // Show pet icons overlay if any
-    if (stats.pets && stats.pets.length > 0) {
-        const petsHtml = stats.pets.map((p, i) => `<div style="position:absolute; bottom:${-10 + i * 15}px; right:${-10 - i * 5}px; font-size:24px; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5)); animation: charFloat ${2 + i * 0.5}s ease-in-out infinite;">${p.emoji}</div>`).join('');
-        bigEl.innerHTML += petsHtml;
-    }
-
-    // Set avatar ring color based on class
-    const ringEl = document.querySelector('.avatar-neon-ring');
-    const glowEl = document.querySelector('.avatar-neon-glow');
+    // Set hero section glow based on class
+    const glowEl = document.querySelector('.char-hero-glow');
     const ringColor = getClassColor(a.level);
-    if (ringEl) ringEl.style.background = `conic-gradient(from var(--angle), ${ringColor}, #a855f7, #ec4899, ${ringColor})`;
-    if (glowEl) glowEl.style.background = `conic-gradient(from var(--angle), ${ringColor}, #a855f7, #ec4899, ${ringColor})`;
+    if (glowEl) glowEl.style.background = `radial-gradient(circle, ${ringColor} 0%, transparent 70%)`;
 
     document.getElementById('prof-name').textContent = a.name;
     const cn = getClassName(a.level);
