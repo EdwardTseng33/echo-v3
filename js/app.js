@@ -2475,6 +2475,7 @@ function doCreateGuild() {
     };
     a.guildId = guildId;
     saveGlobal();
+    refreshAll();
 
     SoundManager.play('levelUp');
     showCelebration('🏰', '公會建立成功！', `「${name}」已建立，邀請碼：${code}`);
@@ -2487,29 +2488,31 @@ function doCreateGuild() {
 function doJoinGuild() {
     const a = me(); if (!a) return;
     const code = document.getElementById('guild-join-code').value.trim();
-    if (!code || code.length !== 6) { showToast('請輸入 6 位數邀請碼！'); return; }
+    if (!code || code.length !== 6) { showToast('請輸入 6 位邀請碼！'); return; }
 
     const guilds = getGuilds();
-    const found = Object.values(guilds).find(g => g.code === code);
+    let found = Object.values(guilds).find(g => g.code === code);
+    let isNew = false;
 
     if (!found) {
         // POC: auto-create a mock guild if code doesn't exist
         const guildId = 'G' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
-        guilds[guildId] = {
+        found = {
             id: guildId,
-            name: '冒險小隊 #' + code,
-            icon: '⚔️',
+            name: '測試冒險團 #' + code,
+            icon: '🛡️',
             code: code,
             ownerId: 'mock-parent',
             createdAt: Date.now(),
             members: [
-                { id: 'mock-parent', name: '隊長（家長）', emoji: '👨‍👧', roleTitle: '會長' },
+                { id: 'mock-parent', name: '家長助手', emoji: '🧑‍💼', roleTitle: '會長' },
                 { id: myId(), name: a.name, emoji: getCharEmojiForGuild(a), roleTitle: '成員' }
             ]
         };
-        a.guildId = guildId;
+        guilds[guildId] = found;
+        isNew = true;
     } else {
-        // Already exists, join it
+        // Check if already in
         if (found.members.some(m => m.id === myId())) {
             showToast('你已經是這個公會的成員了！');
             a.guildId = found.id;
@@ -2520,15 +2523,17 @@ function doJoinGuild() {
         found.members.push({
             id: myId(), name: a.name, emoji: getCharEmojiForGuild(a), roleTitle: '成員'
         });
-        a.guildId = found.id; // Fix: Ensure user object is updated
-        saveGlobal();
-        refreshAll();
-        SoundManager.play('levelUp');
-        showCelebration('🎊', '成功加入公會！', `歡迎加入「${found.name}」`);
-        setTimeout(() => {
-            openGuildDashboard();
-        }, 2600);
     }
+
+    // Common Success Path
+    a.guildId = found.id;
+    saveGlobal();
+    refreshAll();
+    SoundManager.play('levelUp');
+    showCelebration('🎊', isNew ? '成功創建並加入公會！' : '成功加入公會！', `歡迎加入「${found.name}」`);
+    setTimeout(() => {
+        openGuildDashboard();
+    }, 2600);
 }
 
 // --- Leave Guild ---
