@@ -431,7 +431,7 @@ async function handleAvatarUpload(event, isProfile = false) {
     if (!file) return;
 
     const statusEl = document.getElementById('upload-status');
-    const previewEl = document.getElementById(isProfile ? 'prof-char-avatar' : 'avatar-preview');
+    const previewEl = document.getElementById(isProfile ? 'prof-hero-render-target' : 'avatar-preview');
 
     if (statusEl) statusEl.style.display = 'block';
 
@@ -443,7 +443,7 @@ async function handleAvatarUpload(event, isProfile = false) {
             // Show initial preview
             if (previewEl) {
                 if (isProfile) {
-                    previewEl.innerHTML = `<img src="${src}" class="avatar-animated" style="width:120px;height:120px;object-fit:contain; border-radius:50%">`;
+                    previewEl.innerHTML = `<img src="${src}" class="avatar-animated char-hero-image">`;
                 } else {
                     previewEl.innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover;">`;
                 }
@@ -536,7 +536,7 @@ function showCharacterQuote() {
     dialogueInterval = setInterval(() => {
         if (currentScreen !== 'screen-home' && currentScreen !== 'screen-character') return;
         const q = quotes[Math.floor(Math.random() * quotes.length)];
-        const targetId = currentScreen === 'screen-home' ? 'hud-char-icon' : 'prof-char';
+        const targetId = currentScreen === 'screen-home' ? 'hud-char-icon' : 'prof-hero-render-target';
         const bubbleId = currentScreen === 'screen-home' ? 'hud-char-bubble' : 'prof-char-bubble';
         charTalk(q, targetId, bubbleId);
     }, 15000 + Math.random() * 10000);
@@ -767,7 +767,7 @@ function refreshProfile() {
     const gDesc = document.getElementById('profile-guild-desc');
 
     if (g) {
-        if (gIcon) gIcon.textContent = g.icon || '🛡️';
+        if (gIcon) gIcon.textContent = g.icon || '🗡️';
         if (gName) gName.textContent = g.name;
         const member = g.members.find(m => m.id === myId());
         const role = member ? member.roleTitle || '成員' : '成員';

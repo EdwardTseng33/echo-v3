@@ -1,5 +1,5 @@
-﻿/*
-  ECHO 回聲 v3 — Kid RPG Game UI
+/*
+  ECHO �^�n v3 �X Kid RPG Game UI
   Enhanced: idle anims, battle FX, lucky wheel, Google auth
 */
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Noto+Sans+TC:wght@500;700;900&display=swap');
@@ -746,7 +746,7 @@ body::before {
     opacity: 1
 }
 
-/* Character IDLE animation — subtle breathing+bob */
+/* Character IDLE animation �X subtle breathing+bob */
 @keyframes charIdle {
 
     0%,
@@ -826,14 +826,14 @@ body::before {
 .char-hero-section {
     position: relative;
     width: 100%;
-    height: 380px;
-    background: radial-gradient(circle at center 60%, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+    height: 420px;
+    background: radial-gradient(circle at center 75%, rgba(99, 102, 241, 0.15) 0%, transparent 75%);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-end;
-    padding-bottom: 40px;
-    overflow: hidden;
+    overflow: visible;
+    padding-bottom: 20px;
 }
 
 .char-hero-glow {
@@ -885,14 +885,26 @@ body::before {
 
 .char-hero-image {
     max-width: 90%;
-    max-height: 320px;
+    max-height: 350px;
+    width: auto;
+    height: auto;
     object-fit: contain;
-    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+    filter: drop-shadow(0 15px 30px rgba(0,0,0,0.4));
     transition: transform 0.3s ease;
+    z-index: 5;
+    position: relative;
 }
 
 .char-hero-image-container:active .char-hero-image {
-    transform: scale(0.98);
+    max-width: 90%;
+    max-height: 350px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 15px 30px rgba(0,0,0,0.4));
+    transition: transform 0.3s ease;
+    z-index: 5;
+    position: relative;
 }
 
 .avatar-edit-badge {
@@ -1730,7 +1742,7 @@ select:focus {
     }
 }
 
-/* ===== BATTLE ARENA — ENHANCED ===== */
+/* ===== BATTLE ARENA �X ENHANCED ===== */
 .battle-arena {
     flex: 1;
     display: flex;
@@ -2275,7 +2287,7 @@ select:focus {
     color: var(--primary)
 }
 
-/* ===== TOAST (was missing — root cause of stuck toast!) ===== */
+/* ===== TOAST (was missing �X root cause of stuck toast!) ===== */
 .toast {
     position: fixed;
     top: 0;
@@ -2376,7 +2388,7 @@ select:focus {
     }
 }
 
-/* ===== UX IMPROVEMENTS — COMPREHENSIVE POLISH ===== */
+/* ===== UX IMPROVEMENTS �X COMPREHENSIVE POLISH ===== */
 
 /* Bigger XP bar for better progress visibility */
 .xp-track {
@@ -2415,7 +2427,7 @@ select:focus {
     box-shadow: 0 2px 8px rgba(0, 0, 0, .3) !important
 }
 
-/* Publisher badge in task cards — more prominent */
+/* Publisher badge in task cards �X more prominent */
 .task-creator {
     display: inline-flex;
     align-items: center;
@@ -2443,7 +2455,7 @@ select:focus {
     position: relative
 }
 
-/* Reward cost badge — larger and more visible */
+/* Reward cost badge �X larger and more visible */
 .reward-cost {
     font-size: 14px !important;
     font-weight: 900 !important;
@@ -2481,12 +2493,12 @@ select:focus {
     transform: scale(.99)
 }
 
-/* HUD chips — better visual weight */
+/* HUD chips �X better visual weight */
 .hud-chip {
     backdrop-filter: blur(8px)
 }
 
-/* Profile stats — add subtle separators */
+/* Profile stats �X add subtle separators */
 .profile-stats {
     position: relative
 }
@@ -2505,17 +2517,17 @@ select:focus {
     background: rgba(255, 255, 255, .1)
 }
 
-/* Battle arena — better visual hierarchy */
+/* Battle arena �X better visual hierarchy */
 .battle-arena {
     padding: 16px !important
 }
 
-/* Lucky wheel canvas — add glow */
+/* Lucky wheel canvas �X add glow */
 #wheel-canvas {
     filter: drop-shadow(0 0 20px rgba(255, 215, 0, .15))
 }
 
-/* ===== CHARACTER SELECTION — ANIMATED FEEL ===== */
+/* ===== CHARACTER SELECTION �X ANIMATED FEEL ===== */
 .char-option {
     transition: transform .2s ease, box-shadow .2s ease
 }
@@ -2658,7 +2670,7 @@ select:focus {
     }
 }
 
-/* HUD character icon — subtle pulse */
+/* HUD character icon �X subtle pulse */
 .hud-chip img {
     animation: hudCharPulse 4s ease-in-out infinite
 }
@@ -2743,7 +2755,7 @@ select:focus {
     }
 }
 
-/* HUD character icon — subtle pulse */
+/* HUD character icon �X subtle pulse */
 .hud-chip img {
     animation: hudCharPulse 4s ease-in-out infinite
 }
