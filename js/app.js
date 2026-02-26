@@ -1775,7 +1775,7 @@ function startDailyBattle() {
     // Render battle screen
     document.getElementById('bm-sprite').textContent = m.emoji;
     document.getElementById('bm-name').textContent = `Lv.${layer} ${m.name}`;
-    document.getElementById('bp-sprite').innerHTML = getCharImg(c, 56, a.level);
+    document.getElementById('bp-sprite').innerHTML = getCharImg(a, 56, a.level);
     document.getElementById('bp-name').textContent = a.name;
     updateBattleUI();
     showScreen('screen-battle');
@@ -2561,9 +2561,6 @@ function openGuildDashboard() {
         openGuildJoinScreen();
         return;
     }
-    // Update terminology for Guild prompt if it's reused
-    document.getElementById('gm-title').textContent = '🏰 加入公會冒險';
-    document.getElementById('gm-desc').textContent = '成為公會成員，你可以領取來自領主 (發布者) 的委託，並獲得公會獎勵！';
 
     renderGuildDashboard();
     showScreen('screen-guild');
