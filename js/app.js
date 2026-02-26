@@ -766,15 +766,15 @@ function refreshProfile() {
     const gDesc = document.getElementById('profile-guild-desc');
 
     if (g) {
-        if (gIcon) gIcon.textContent = g.icon || '🏰';
+        if (gIcon) gIcon.textContent = g.icon || '🛡️';
         if (gName) gName.textContent = g.name;
         const member = g.members.find(m => m.id === myId());
         const role = member ? member.roleTitle || '成員' : '成員';
-        if (gDesc) gDesc.textContent = `職位：${role}`;
+        if (gDesc) gDesc.textContent = `你的職位：${role}`;
     } else {
         if (gIcon) gIcon.textContent = '🏰';
         if (gName) gName.textContent = '加入公會';
-        if (gDesc) gDesc.textContent = '加入或建立你的公會，解鎖更多任務！';
+        if (gDesc) gDesc.textContent = '加入或是建立你的公會，解鎖更多任務！';
     }
 
     // Equip rendering
@@ -2503,21 +2503,20 @@ function doCreateGuild() {
 // --- Join Guild ---
 function doJoinGuild() {
     const a = me(); if (!a) return;
-    const code = document.getElementById('guild-join-code').value.trim();
-    if (!code || code.length !== 6) { showToast('請輸入 6 位邀請碼！'); return; }
+    const codeValue = document.getElementById('guild-join-code').value.trim();
+    if (!codeValue || codeValue.length !== 6) { showToast('請輸入 6 位邀請碼！'); return; }
 
     const guilds = getGuilds();
-    let found = Object.values(guilds).find(g => g.code === code);
+    let found = Object.values(guilds).find(g => g.code === codeValue);
     let isNew = false;
 
     if (!found) {
-        // POC: auto-create a mock guild if code doesn't exist
         const guildId = 'G' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
         found = {
             id: guildId,
-            name: '測試冒險團 #' + code,
+            name: '測試冒險團 #' + codeValue,
             icon: '🛡️',
-            code: code,
+            code: codeValue,
             ownerId: 'mock-parent',
             createdAt: Date.now(),
             members: [
@@ -2528,7 +2527,6 @@ function doJoinGuild() {
         guilds[guildId] = found;
         isNew = true;
     } else {
-        // Already exists, join it
         if (found.members.some(m => m.id === myId())) {
             showToast('你已經是這個公會的成員了！');
             a.guildId = found.id;
@@ -2541,15 +2539,12 @@ function doJoinGuild() {
         });
     }
 
-    // Success Path
     a.guildId = found.id;
     saveGlobal();
     refreshAll();
     SoundManager.play('levelUp');
     showCelebration('🎊', isNew ? '成功創建並加入公會！' : '成功加入公會！', `歡迎加入「${found.name}」`);
-    setTimeout(() => {
-        openGuildDashboard();
-    }, 2600);
+    setTimeout(() => { openGuildDashboard(); }, 2600);
 }
 
 // --- Leave Guild ---
