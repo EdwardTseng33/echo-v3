@@ -629,7 +629,7 @@ function showScreen(id) {
     if (id === 'screen-create') resetCreateForm();
 }
 function nav(id, btn) {
-    SoundManager.play('click');
+
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     if (btn) btn.classList.add('active');
     showScreen(id);
@@ -1851,6 +1851,7 @@ function updatePersistentHp() {
 
 function battleAttack() {
     if (!battleState || battleState.done) return;
+    SoundManager.play('attack');
     const bs = battleState;
     const dmg = Math.floor(bs.player.atk * (0.8 + Math.random() * 0.4));
     bs.monster.curHp -= dmg;
@@ -1877,6 +1878,7 @@ function getFunnySkillName() {
 
 function battleSkill() {
     if (!battleState || battleState.done || battleState.player.skillUsed) return;
+    SoundManager.play('skill');
     const a = me();
     const bs = battleState;
     bs.player.skillUsed = true;
@@ -1902,6 +1904,7 @@ function battleHeal() {
         if (!a || (a.potions || 0) <= 0) showToast('沒有治療藥水了！請去幸運轉盤或寶庫獲取。');
         return;
     }
+    SoundManager.play('heal');
     const bs = battleState;
     a.potions--;
     saveGlobal();
@@ -1936,6 +1939,7 @@ function monsterTurn() {
         bs.log.push(`<span class="log-enemy">👹 ${bs.monster.name} 反擊！造成 ${dmg} 傷害！</span>`);
         shakeElement('bp-sprite');
         spawnDmgFloat('player-area', `-${dmg}`, 'atk');
+        SoundManager.play('attack');
     }
 
     updatePersistentHp();
@@ -1943,6 +1947,7 @@ function monsterTurn() {
 }
 
 function battleWin() {
+    SoundManager.play('win');
     const bs = battleState;
     bs.done = true;
     bs.monster.curHp = 0;
