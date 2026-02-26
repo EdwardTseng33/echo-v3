@@ -748,6 +748,24 @@ function refreshProfile() {
     const pDef = document.getElementById('p-def');
     if (pDef) pDef.textContent = stats.def;
 
+    // Guild info
+    const g = getMyGuild();
+    const gIcon = document.getElementById('profile-guild-icon');
+    const gName = document.getElementById('profile-guild-name');
+    const gDesc = document.getElementById('profile-guild-desc');
+
+    if (g) {
+        if (gIcon) gIcon.textContent = g.icon || '🏰';
+        if (gName) gName.textContent = g.name;
+        const member = g.members.find(m => m.id === myId());
+        const role = member ? member.roleTitle || '成員' : '成員';
+        if (gDesc) gDesc.textContent = `職位：${role}`;
+    } else {
+        if (gIcon) gIcon.textContent = '🏰';
+        if (gName) gName.textContent = '加入公會';
+        if (gDesc) gDesc.textContent = '加入或建立你的公會，解鎖更多任務！';
+    }
+
     // Equip rendering
     const eqGrid = document.getElementById('equip-grid');
     if (eqGrid) {
