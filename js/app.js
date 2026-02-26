@@ -645,7 +645,7 @@ function nav(id, btn) {
 }
 
 // ===== REFRESH =====
-function refreshAll() { refreshHUD(); renderTaskFeed(); checkAchievements(); refreshProfile(); }
+function refreshAll() { refreshHUD(); renderTaskFeed(); checkAchievements(); }
 
 function refreshHUD() {
     const a = me(); if (!a) return;
@@ -747,6 +747,17 @@ function refreshProfile() {
     if (pAtk) pAtk.textContent = stats.atk;
     const pDef = document.getElementById('p-def');
     if (pDef) pDef.textContent = stats.def;
+
+    // --- Menu Guild Label Sync ---
+    const menuLabel = document.getElementById('menu-guild-label');
+    if (menuLabel) {
+        const guild = getMyGuild();
+        if (guild) {
+            menuLabel.innerHTML = `<span style="color:var(--primary);font-weight:800;">${guild.icon} ${esc(guild.name)}</span> <i class="ph ph-caret-right"></i>`;
+        } else {
+            menuLabel.innerHTML = '尚未加入 <i class="ph ph-caret-right"></i>';
+        }
+    }
 
     // Guild info
     const g = getMyGuild();
@@ -999,8 +1010,8 @@ function renderTaskFeed() {
     const a = me();
     const g = getMyGuild();
 
-    // Home Screen Guild Card Removed per requirement: "取消於委託看版上顯示"
     let headHtml = '';
+    // Home Screen Guild Card Removed per requirement: "取消於委託看版上顯示"
 
     const tasks = globalData.tasks.filter(t => t.status === 'PUBLISHED').sort((a, b) => b.createdAt - a.createdAt);
     if (!tasks.length) {
@@ -1247,6 +1258,10 @@ function publishTask() {
 function claimTask(id) {
     const t = globalData.tasks.find(x => x.id === id);
     if (!t || t.status !== 'PUBLISHED') return;
+
+    // Guild Check
+    const isMine = t.creatorId === myId();
+    if (!isMine && !requireGuild('接取任務')) return;
     t.status = 'CLAIMED'; t.claimedBy = myId(); t.claimedAt = Date.now();
     saveGlobal();
     showToast('💪 委託已接取！加油！');
@@ -1471,6 +1486,7 @@ let pendingPurchaseSku = null;
 
 function redeemReward(sku) {
     const a = me(); if (!a) return;
+    if (!requireGuild('兌換獎勵')) return;
     const r = globalData.rewards.find(x => x.sku === sku);
     if (!r || a.points < r.cost) { showToast('金幣不足！'); return; }
 
@@ -2512,7 +2528,7 @@ function doJoinGuild() {
         guilds[guildId] = found;
         isNew = true;
     } else {
-        // Check if already in
+        // Already exists, join it
         if (found.members.some(m => m.id === myId())) {
             showToast('你已經是這個公會的成員了！');
             a.guildId = found.id;
@@ -2525,7 +2541,7 @@ function doJoinGuild() {
         });
     }
 
-    // Common Success Path
+    // Success Path
     a.guildId = found.id;
     saveGlobal();
     refreshAll();
@@ -2771,34 +2787,4 @@ function getCharEmojiForGuild(acc) {
     return '🧙';
 }
 
-// --- Update refreshProfile to show guild info in menu ---
-const _originalRefreshProfile = refreshProfile;
-refreshProfile = function () {
-    _originalRefreshProfile();
-    const a = me(); if (!a) return;
-    const label = document.getElementById('menu-guild-label');
-    if (label) {
-        const g = getMyGuild();
-        if (g) {
-            label.innerHTML = `<span style="color:var(--primary);font-weight:800;">${g.icon} ${esc(g.name)}</span> <i class="ph ph-caret-right"></i>`;
-        } else {
-            label.innerHTML = '尚未加入 <i class="ph ph-caret-right"></i>';
-        }
-    }
-};
-
-// --- Intercept claimTask to require guild ---
-const _originalClaimTask = claimTask;
-claimTask = function (id) {
-    const t = globalData.tasks.find(x => x.id === id);
-    const isMine = t && t.creatorId === myId();
-    if (!isMine && !requireGuild('接取任務')) return;
-    _originalClaimTask(id);
-};
-
-// --- Intercept redeemReward to require guild ---
-const _originalRedeemReward = redeemReward;
-redeemReward = function (sku) {
-    if (!requireGuild('兌換獎勵')) return;
-    _originalRedeemReward(sku);
-};
+// --- End of Script ---
