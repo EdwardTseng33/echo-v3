@@ -643,16 +643,9 @@
                             class="ph-bold ph-shield"></i> 防禦</span></div>
             </div>
 
-            <!-- Character Switch Button Removed -->
-            <div style="padding: 0 16px; margin-top: 8px;">
-                <button class="btn btn-secondary btn-block"
-                    style="border-radius: 12px; font-size: 14px; border-color:var(--border);"
-                    onclick="document.getElementById('avatar-input-profile').click()">
-                    <i class="ph-bold ph-camera"></i> 更換頭像照片
-                </button>
-                <input type="file" id="avatar-input-profile" hidden accept="image/*"
-                    onchange="handleAvatarUpload(event, true)">
-            </div>
+            <!-- Consolidated: Photo upload now handled by avatar overlay -->
+            <input type="file" id="avatar-input-profile" hidden accept="image/*"
+                onchange="handleAvatarUpload(event, true)">
 
             <!-- ===== 1. MY GUILD (PROMOTED) ===== -->
             <div style="padding:0 16px; margin-top:8px;">
