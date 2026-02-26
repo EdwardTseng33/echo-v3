@@ -645,7 +645,7 @@ function nav(id, btn) {
 }
 
 // ===== REFRESH =====
-function refreshAll() { refreshHUD(); renderTaskFeed(); checkAchievements(); }
+function refreshAll() { refreshHUD(); renderTaskFeed(); checkAchievements(); refreshProfile(); }
 
 function refreshHUD() {
     const a = me(); if (!a) return;
@@ -999,30 +999,8 @@ function renderTaskFeed() {
     const a = me();
     const g = getMyGuild();
 
+    // Home Screen Guild Card Removed per requirement: "取消於委託看版上顯示"
     let headHtml = '';
-    if (!g) {
-        headHtml = `
-            <div class="no-guild-banner" id="home-guild-banner" style="margin-bottom:16px;">
-                <div class="no-guild-icon">🏰</div>
-                <div class="no-guild-title">解鎖公會特權，讓冒險更有溫度！</div>
-                <div class="no-guild-desc">加入公會開啟家族冒險，解鎖專屬任務與獨家獎勵！⚔️</div>
-                <button class="btn btn-primary" style="padding:10px 28px;font-size:14px;border-radius:14px;" onclick="openGuildJoinScreen()">
-                    <i class="ph-bold ph-magic-wand"></i> ✨ 開啟公會冒險
-                </button>
-            </div>`;
-    } else {
-        headHtml = `
-            <div class="card" style="padding:16px; margin-bottom:16px; border-left: 4px solid var(--primary); background: linear-gradient(90deg, var(--surface), #ffffff);" onclick="openGuildDashboard()">
-                <div style="display:flex; align-items:center; gap:12px;">
-                    <div style="font-size:32px;">${g.icon || '🏰'}</div>
-                    <div style="flex:1;">
-                        <div style="font-size:11px; font-weight:900; color:var(--primary); text-transform:uppercase;">所屬公會</div>
-                        <h4 style="font-size:16px; font-weight:900;">${esc(g.name)}</h4>
-                    </div>
-                    <i class="ph-bold ph-caret-right" style="color:var(--text3)"></i>
-                </div>
-            </div>`;
-    }
 
     const tasks = globalData.tasks.filter(t => t.status === 'PUBLISHED').sort((a, b) => b.createdAt - a.createdAt);
     if (!tasks.length) {
@@ -2542,10 +2520,11 @@ function doJoinGuild() {
         found.members.push({
             id: myId(), name: a.name, emoji: getCharEmojiForGuild(a), roleTitle: '成員'
         });
+        a.guildId = found.id; // Fix: Ensure user object is updated
         saveGlobal();
         refreshAll();
         SoundManager.play('levelUp');
-        showCelebration('🎉', '成功加入公會！', `歡迎加入「${getMyGuild().name}」`);
+        showCelebration('🎊', '成功加入公會！', `歡迎加入「${found.name}」`);
         setTimeout(() => {
             openGuildDashboard();
         }, 2600);
