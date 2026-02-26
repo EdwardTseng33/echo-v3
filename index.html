@@ -613,19 +613,20 @@
             </div>
             <div class="char-profile">
                 <div class="char-profile-avatar-container"
-                    onclick="document.getElementById('acc-avatar-input').click()">
+                    onclick="document.getElementById('avatar-input-profile').click()">
                     <div class="avatar-neon-glow"></div>
                     <div class="avatar-neon-ring"></div>
                     <div class="char-profile-avatar" id="prof-char-avatar">
                         <span class="char-big" id="prof-char">🧙</span>
                     </div>
+                    <!-- Single consolidated trigger: bottom-right camera overlay -->
+                    <div class="avatar-edit-badge">
+                        <i class="ph-fill ph-camera"></i>
+                    </div>
                 </div>
-                <button class="btn btn-primary" onclick="document.getElementById('acc-avatar-input').click()"
-                    style="padding:10px 24px; font-size:14px; border-radius:100px; margin-bottom:20px; box-shadow:0 4px 12px rgba(99,102,241,0.2);">
-                    <i class="ph-bold ph-camera"></i> 更換頭像照片
-                </button>
+
                 <div class="char-dialogue-bubble" id="prof-char-bubble"
-                    style="top:20px; left:50%; transform:translateX(-50%) translateY(10px) scale(0.95); max-width: 250px;">
+                    style="top:10px; left:50%; transform:translateX(-50%) translateY(10px) scale(0.95); max-width: 250px;">
                 </div>
                 <div class="char-title" id="prof-name">冒險者</div>
                 <div class="char-subtitle" id="prof-classname">見習冒險者</div>
@@ -1090,6 +1091,9 @@
                 <i class="ph-fill ph-shield-star"></i><span>冒險者</span>
             </button>
         </nav>
+
+        <!-- v1.001 Version Tag -->
+        <div class="version-tag">v1.001</div>
     </div>
 
     <script src="js/app.js"></script>

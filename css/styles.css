@@ -854,6 +854,34 @@ body::before {
     font-size: 80px;
 }
 
+/* v1.001 Consolidated Avatar Edit Badge */
+.avatar-edit-badge {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 36px;
+    height: 36px;
+    background: var(--primary);
+    color: white;
+    border: 3px solid #FFFFFF;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.char-profile-avatar-container:active .avatar-edit-badge {
+    transform: scale(0.9) rotate(5deg);
+}
+
+.avatar-edit-badge i {
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.1));
+}
+
 /* Dual-Neon Glow Ring */
 .avatar-neon-ring {
     position: absolute;
@@ -3616,4 +3644,18 @@ select:focus {
 .ph-bold.ph-coin,
 .ph-fill.ph-coin {
     color: var(--primary) !important;
+}
+
+/* v1.001 Version Tag */
+.version-tag {
+    position: fixed;
+    bottom: 85px;
+    right: 15px;
+    font-size: 10px;
+    font-weight: 900;
+    color: var(--text3);
+    opacity: 0.4;
+    letter-spacing: 1px;
+    pointer-events: none;
+    z-index: 1000;
 }

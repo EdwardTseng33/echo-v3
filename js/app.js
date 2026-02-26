@@ -417,6 +417,15 @@ async function handleProfileAvatarUpload(event) {
     }
 }
 
+async function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+    });
+}
+
 async function handleAvatarUpload(event, isProfile = false) {
     const file = event.target.files[0];
     if (!file) return;
@@ -447,8 +456,8 @@ async function handleAvatarUpload(event, isProfile = false) {
             if (bgLib) {
                 try {
                     const blob = await bgLib(src);
-                    src = URL.createObjectURL(blob);
-                    console.log("Background removed successfully");
+                    src = await blobToBase64(blob); // Convert to Base64 for persistence
+                    console.log("Background removed and converted to base64");
                 } catch (err) {
                     console.error("BG Removal failed, using original:", err);
                 }
