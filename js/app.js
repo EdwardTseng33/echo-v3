@@ -431,7 +431,7 @@ async function handleAvatarUpload(event, isProfile = false) {
     if (!file) return;
 
     const statusEl = document.getElementById('upload-status');
-    const previewEl = document.getElementById(isProfile ? 'prof-hero-render-target' : 'avatar-preview');
+    const previewEl = document.getElementById(isProfile 成員 'prof-char-avatar' : 'avatar-preview');
 
     if (statusEl) statusEl.style.display = 'block';
 
@@ -443,15 +443,15 @@ async function handleAvatarUpload(event, isProfile = false) {
             // Show initial preview
             if (previewEl) {
                 if (isProfile) {
-                    previewEl.innerHTML = `<img src="${src}" class="avatar-animated char-hero-image">`;
+                    previewEl.innerHTML = `<img src="${src}" class="avatar-animated" style="width:120px;height:120px;object-fit:contain; border-radius:50%">`;
                 } else {
                     previewEl.innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover;">`;
                 }
             }
 
             // Remove background
-            const bgLib = typeof imglyRemoveBackground !== 'undefined' ? imglyRemoveBackground :
-                (typeof removeBackground !== 'undefined' ? removeBackground : null);
+            const bgLib = typeof imglyRemoveBackground !== 'undefined' 成員 imglyRemoveBackground :
+                (typeof removeBackground !== 'undefined' 成員 removeBackground : null);
 
             if (bgLib) {
                 try {
@@ -488,14 +488,11 @@ function getCharEmoji(charDef, level) {
 }
 const DEFAULT_AVATAR = 'img/chars/mage.png';
 
-function getCharImg(charDef, size = 48, level = 1, isAnimated = true, variant = 'avatar') {
-    const a = typeof charDef === 'string' ? globalData.accounts[charDef] : charDef;
-    const src = (a && a.avatarUrl) ? a.avatarUrl : DEFAULT_AVATAR;
-    const animClass = isAnimated ? 'avatar-animated' : '';
-    if (variant === 'hero') {
-        return `<img src="${src}" class="${animClass} char-hero-image" id="hero-img-main">`;
-    }
-    return `<img src="${src}" class="${animClass} char-avatar-img" style="width:${size}px;height:${size}px;object-fit:contain;border-radius:50%">`;
+function getCharImg(charDef, size = 48, level = 1, isAnimated = true) {
+    const a = typeof charDef === 'string' 成員 globalData.accounts[charDef] : charDef;
+    const src = (a && a.avatarUrl) 成員 a.avatarUrl : DEFAULT_AVATAR;
+    const animClass = isAnimated 成員 'avatar-animated' : '';
+    return `<img src="${src}" class="${animClass}" style="width:${size}px;height:${size}px;object-fit:contain; border-radius:50%">`;
 }
 function getClassName(level, char) {
     let cls = CLASS_PATH[0];
@@ -536,8 +533,8 @@ function showCharacterQuote() {
     dialogueInterval = setInterval(() => {
         if (currentScreen !== 'screen-home' && currentScreen !== 'screen-character') return;
         const q = quotes[Math.floor(Math.random() * quotes.length)];
-        const targetId = currentScreen === 'screen-home' ? 'hud-char-icon' : 'prof-hero-render-target';
-        const bubbleId = currentScreen === 'screen-home' ? 'hud-char-bubble' : 'prof-char-bubble';
+        const targetId = currentScreen === 'screen-home' 成員 'hud-char-icon' : 'prof-char';
+        const bubbleId = currentScreen === 'screen-home' 成員 'hud-char-bubble' : 'prof-char-bubble';
         charTalk(q, targetId, bubbleId);
     }, 15000 + Math.random() * 10000);
 }
@@ -589,12 +586,12 @@ function checkDailyLogin() {
     const gridEl = document.getElementById('daily-rewards-grid');
     if (gridEl) {
         gridEl.innerHTML = DAILY_REWARDS.map(r => `
-            <div style="background:${r.day === displayStreak ? 'rgba(255,215,0,0.1)' : 'var(--bg)'}; border:2px solid ${r.day === displayStreak ? 'var(--primary)' : 'var(--border)'}; border-radius:12px; padding:12px 8px; text-align:center; position:relative; opacity:${r.day < displayStreak ? '0.5' : '1'};">
-                ${r.day < displayStreak ? '<div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:24px; z-index:2; text-shadow:0 0 4px #fff;">✅</div>' : ''}
+            <div style="background:${r.day === displayStreak 成員 'rgba(255,215,0,0.1)' : 'var(--bg)'}; border:2px solid ${r.day === displayStreak 成員 'var(--primary)' : 'var(--border)'}; border-radius:12px; padding:12px 8px; text-align:center; position:relative; opacity:${r.day < displayStreak 成員 '0.5' : '1'};">
+                ${r.day < displayStreak 成員 '<div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:24px; z-index:2; text-shadow:0 0 4px #fff;">✅</div>' : ''}
                 <div style="font-size:10px; font-weight:800; color:var(--text2); margin-bottom:4px">Day ${r.day}</div>
                 <div style="font-size:24px; margin-bottom:4px; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.1));">${r.icon}</div>
                 <div style="font-size:11px; font-weight:900; color:var(--text);">${r.label}</div>
-                ${r.day === 7 ? '<div style="position:absolute; top:-8px; right:-8px; background:#FF4757; color:#fff; font-size:9px; padding:2px 6px; border-radius:10px; font-weight:900;">大獎！</div>' : ''}
+                ${r.day === 7 成員 '<div style="position:absolute; top:-8px; right:-8px; background:#FF4757; color:#fff; font-size:9px; padding:2px 6px; border-radius:10px; font-weight:900;">大獎！</div>' : ''}
             </div>
         `).join('');
     }
@@ -635,7 +632,7 @@ function showScreen(id) {
     if (id === 'screen-home') { refreshHUD(); renderTaskFeed(); refreshDailyBanner(); refreshWheelHint(); }
     if (id === 'screen-dashboard') { renderDashboard('week'); }
     if (id === 'screen-mytasks') renderMyTasks();
-    if (id === 'screen-rewards') { renderRewards(); document.getElementById('shop-bal').textContent = me()?.points || 0; }
+    if (id === 'screen-rewards') { renderRewards(); document.getElementById('shop-bal').textContent = me()成員.points || 0; }
     if (id === 'screen-character') refreshProfile();
     if (id === 'screen-subscription') refreshSubPage();
     if (id === 'screen-create') resetCreateForm();
@@ -681,7 +678,7 @@ function refreshHUD() {
 
     const xpCur = xpForLevel(a.level);
     const xpNxt = xpForLevel(a.level + 1);
-    const pct = xpNxt > xpCur ? ((a.totalXP - xpCur) / (xpNxt - xpCur)) * 100 : 100;
+    const pct = xpNxt > xpCur 成員 ((a.totalXP - xpCur) / (xpNxt - xpCur)) * 100 : 100;
 
     const elXpFill = document.getElementById('xp-fill');
     if (elXpFill) elXpFill.style.width = Math.min(pct, 100) + '%';
@@ -690,15 +687,15 @@ function refreshHUD() {
     if (elXpCur) elXpCur.textContent = `${a.totalXP} / ${xpNxt} XP`;
 
     const elXpNxt = document.getElementById('xp-next');
-    if (elXpNxt) elXpNxt.textContent = a.level >= LEVEL_CAP ? 'MAX' : `→ Lv.${a.level + 1}`;
+    if (elXpNxt) elXpNxt.textContent = a.level >= LEVEL_CAP 成員 'MAX' : `→ Lv.${a.level + 1}`;
 
     // Guild badge in home profile
     const guildBadge = document.getElementById('hud-guild-badge');
     if (guildBadge) {
-        const guild = a.guildId && globalData.guilds ? globalData.guilds[a.guildId] : null;
+        const guild = a.guildId && globalData.guilds 成員 globalData.guilds[a.guildId] : null;
         if (guild) {
             const member = guild.members.find(m => m.id === globalData.activeId);
-            const roleTitle = member ? member.roleTitle || '成員' : '成員';
+            const roleTitle = member 成員 member.roleTitle || '成員' : '成員';
             guildBadge.innerHTML = `${guild.icon} ${guild.name} · ${roleTitle}`;
             guildBadge.style.display = 'inline-flex';
         } else {
@@ -712,28 +709,30 @@ function refreshProfile() {
     const tierIdx = getCharTier(a.level);
     const stats = getPlayerStats(a);
 
-    const heroEl = document.getElementById('prof-hero-render-target');
+    const bigEl = document.getElementById('prof-char');
     const bubbleEl = document.getElementById('prof-char-bubble');
-    if (heroEl) {
-        heroEl.innerHTML = getCharImg(a, 0, a.level, false, 'hero');
-        heroEl.style.cursor = 'pointer';
-        heroEl.onclick = (e) => {
-            e.stopPropagation(); // Avoid triggering file input
+    if (bigEl) {
+        bigEl.innerHTML = getCharImg(a, 130, a.level, false);
+        bigEl.className = 'char-big';
+        bigEl.style.cursor = 'pointer';
+        bigEl.onclick = () => {
             const quote = ADVENTURE_QUOTES[Math.floor(Math.random() * ADVENTURE_QUOTES.length)];
-            charTalk(quote, 'prof-hero-render-target', 'prof-char-bubble');
+            charTalk(quote, 'prof-char', 'prof-char-bubble');
         };
-
-        // Show pet icons overlay if any
-        if (stats.pets && stats.pets.length > 0) {
-            const petsHtml = stats.pets.map((p, i) => `<div style="position:absolute; bottom:${-10 + i * 15}px; right:${-10 - i * 5}px; font-size:24px; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5)); animation: charFloat ${2 + i * 0.5}s ease-in-out infinite;">${p.emoji}</div>`).join('');
-            heroEl.innerHTML += petsHtml;
-        }
     }
 
-    // Set hero section glow based on class
-    const glowEl = document.querySelector('.char-hero-glow');
+    // Show pet icons overlay if any
+    if (stats.pets && stats.pets.length > 0) {
+        const petsHtml = stats.pets.map((p, i) => `<div style="position:absolute; bottom:${-10 + i * 15}px; right:${-10 - i * 5}px; font-size:24px; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5)); animation: charFloat ${2 + i * 0.5}s ease-in-out infinite;">${p.emoji}</div>`).join('');
+        bigEl.innerHTML += petsHtml;
+    }
+
+    // Set avatar ring color based on class
+    const ringEl = document.querySelector('.avatar-neon-ring');
+    const glowEl = document.querySelector('.avatar-neon-glow');
     const ringColor = getClassColor(a.level);
-    if (glowEl) glowEl.style.background = `radial-gradient(circle, ${ringColor} 0%, transparent 70%)`;
+    if (ringEl) ringEl.style.background = `conic-gradient(from var(--angle), ${ringColor}, #a855f7, #ec4899, ${ringColor})`;
+    if (glowEl) glowEl.style.background = `conic-gradient(from var(--angle), ${ringColor}, #a855f7, #ec4899, ${ringColor})`;
 
     document.getElementById('prof-name').textContent = a.name;
     const cn = getClassName(a.level);
@@ -767,10 +766,10 @@ function refreshProfile() {
     const gDesc = document.getElementById('profile-guild-desc');
 
     if (g) {
-        if (gIcon) gIcon.textContent = g.icon || '🗡️';
+        if (gIcon) gIcon.textContent = g.icon || '🛡️';
         if (gName) gName.textContent = g.name;
         const member = g.members.find(m => m.id === myId());
-        const role = member ? member.roleTitle || '成員' : '成員';
+        const role = member 成員 member.roleTitle || '成員' : '成員';
         if (gDesc) gDesc.textContent = `你的職位：${role}`;
     } else {
         if (gIcon) gIcon.textContent = '🏰';
@@ -790,8 +789,8 @@ function refreshProfile() {
                     <div style="flex:1">
                         <div style="font-weight:900; font-size:14px; color:var(--text); line-height:1.2; margin-bottom:2px;">${eq.name}</div>
                         <div style="font-size:11px; color:var(--text2); display:flex; gap:6px;">
-                            ${eq.atk ? `<span style="color:#FF6B00"><i class="ph-bold ph-sword"></i> +${eq.atk}</span>` : ''}
-                            ${eq.def ? `<span style="color:#00E5FF"><i class="ph-bold ph-shield"></i> +${eq.def}</span>` : ''}
+                            ${eq.atk 成員 `<span style="color:#FF6B00"><i class="ph-bold ph-sword"></i> +${eq.atk}</span>` : ''}
+                            ${eq.def 成員 `<span style="color:#00E5FF"><i class="ph-bold ph-shield"></i> +${eq.def}</span>` : ''}
                         </div>
                     </div>
                 </div>
@@ -820,7 +819,7 @@ function refreshProfile() {
     const subEl = document.getElementById('menu-sub-label');
     if (subEl) {
         subEl.innerHTML = a.subscription === 'pro'
-            ? '<span style="color:#FFD700">Pro</span> <i class="ph ph-caret-right"></i>'
+            成員 '<span style="color:#FFD700">Pro</span> <i class="ph ph-caret-right"></i>'
             : '免費版 <i class="ph ph-caret-right"></i>';
     }
 
@@ -830,10 +829,10 @@ function refreshProfile() {
     const guildName = document.getElementById('profile-guild-name');
     const guildDesc = document.getElementById('profile-guild-desc');
     if (guildCard) {
-        const guild = a.guildId && globalData.guilds ? globalData.guilds[a.guildId] : null;
+        const guild = a.guildId && globalData.guilds 成員 globalData.guilds[a.guildId] : null;
         if (guild) {
             const member = guild.members.find(m => m.id === globalData.activeId);
-            const roleTitle = member ? member.roleTitle || '成員' : '成員';
+            const roleTitle = member 成員 member.roleTitle || '成員' : '成員';
             if (guildIcon) guildIcon.textContent = guild.icon;
             if (guildName) guildName.textContent = guild.name;
             if (guildDesc) guildDesc.innerHTML = `<span style="color:var(--primary);font-weight:800;">${roleTitle}</span> · ${guild.members.length} 位成員`;
@@ -847,11 +846,11 @@ function refreshProfile() {
     // Guild badge under character name in profile
     const profClassBadge = document.getElementById('prof-class-badge');
     if (profClassBadge) {
-        const guild = a.guildId && globalData.guilds ? globalData.guilds[a.guildId] : null;
+        const guild = a.guildId && globalData.guilds 成員 globalData.guilds[a.guildId] : null;
         let badgeHtml = `⭐ Lv.${a.level} ${cn}`;
         if (guild) {
             const member = guild.members.find(m => m.id === globalData.activeId);
-            const roleTitle = member ? member.roleTitle || '成員' : '成員';
+            const roleTitle = member 成員 member.roleTitle || '成員' : '成員';
             badgeHtml += ` <span class="guild-inline-badge" style="margin-left:6px;margin-top:0;">${guild.icon} ${guild.name}</span>`;
         }
         profClassBadge.innerHTML = badgeHtml;
@@ -896,7 +895,7 @@ function openAccountSettings() {
     const elGoogle = document.getElementById('acc-google-status');
     const elLoc = document.getElementById('acc-location');
     if (elName) elName.textContent = a.name || '冒險者';
-    if (elAge) elAge.textContent = a.age || '?';
+    if (elAge) elAge.textContent = a.age || '成員';
     if (elEmail) elEmail.textContent = a.email || 'user@echo.com';
     if (elGoogle) {
         if (a.googleBound) {
@@ -1027,11 +1026,11 @@ function taskCardHTML(t) {
     if (t.deadline) {
         const msLeft = new Date(t.deadline).getTime() - Date.now();
         const isUrgent = msLeft > 0 && msLeft < 86400000;
-        dlStr = `<div class="reward-chip ${isUrgent ? 'urgent' : ''}"><i class="ph-fill ph-timer"></i> ${formatDeadline(t.deadline)}${isUrgent ? ' (緊急!)' : ''}</div>`;
+        dlStr = `<div class="reward-chip ${isUrgent 成員 'urgent' : ''}"><i class="ph-fill ph-timer"></i> ${formatDeadline(t.deadline)}${isUrgent 成員 ' (緊急!)' : ''}</div>`;
     }
-    const locStr = t.location ? `<div class="reward-chip"><i class="ph-fill ph-map-pin"></i> ${esc(t.location)}</div>` : '';
-    const checkCount = t.checklist ? t.checklist.length : 0;
-    const checkStr = checkCount ? `<div class="reward-chip"><i class="ph-bold ph-list-checks"></i> ${checkCount}步驟</div>` : '';
+    const locStr = t.location 成員 `<div class="reward-chip"><i class="ph-fill ph-map-pin"></i> ${esc(t.location)}</div>` : '';
+    const checkCount = t.checklist 成員 t.checklist.length : 0;
+    const checkStr = checkCount 成員 `<div class="reward-chip"><i class="ph-bold ph-list-checks"></i> ${checkCount}步驟</div>` : '';
     return `<div class="card task-card" onclick="openDetail('${t.id}')">
     <div class="flex justify-between items-center mb-2">
       <div class="task-type">${TYPE_LABELS[t.type] || t.type}</div>
@@ -1064,10 +1063,10 @@ function renderMyTasks() {
     const done = globalData.tasks.filter(t => t.claimedBy === uid && t.status === 'COMPLETED_CONFIRMED');
 
     document.getElementById('mytasks-active').innerHTML = active.length
-        ? active.map(t => taskCardHTML(t)).join('')
+        成員 active.map(t => taskCardHTML(t)).join('')
         : '<div class="text-center text-muted" style="padding:24px"><p>沒有進行中的冒險</p></div>';
     document.getElementById('mytasks-done').innerHTML = done.length
-        ? done.map(t => taskCardHTML(t)).join('')
+        成員 done.map(t => taskCardHTML(t)).join('')
         : '<div class="text-center text-muted" style="padding:24px"><p>還沒達成過冒險！</p></div>';
 }
 
@@ -1094,7 +1093,7 @@ function openDetail(taskId, returnTo) {
     let metaHTML = '';
     if (t.deadline) metaHTML += `<div class="reward-chip mb-2"><i class="ph ph-timer" style="color:var(--orange)"></i> 截止：${formatDeadline(t.deadline)}</div> `;
     if (t.location) metaHTML += `<div class="reward-chip mb-2"><i class="ph-fill ph-map-pin" style="color:var(--secondary)"></i> ${esc(t.location)}</div>`;
-    document.getElementById('det-meta-extra').innerHTML = metaHTML ? `<div class="flex gap-2 flex-wrap">${metaHTML}</div>` : '';
+    document.getElementById('det-meta-extra').innerHTML = metaHTML 成員 `<div class="flex gap-2 flex-wrap">${metaHTML}</div>` : '';
 
     // Checklist
     const checkEl = document.getElementById('det-checklist');
@@ -1102,10 +1101,10 @@ function openDetail(taskId, returnTo) {
         const isClaimer = t.claimedBy === myId();
         checkEl.innerHTML = `<h3 class="mb-2" style="font-size:14px;font-weight:900">📝 委託內容</h3>` +
             t.checklist.map((item, i) => `
-        <div class="flex items-center gap-2 mb-2" style="padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;cursor:${isClaimer ? 'pointer' : 'default'}"
-          ${isClaimer ? `onclick="toggleCheckItem('${t.id}',${i})"` : ''}>
-          <span style="font-size:18px">${item.done ? '✅' : '⬜'}</span>
-          <span style="font-size:13px;font-weight:700;${item.done ? 'text-decoration:line-through;color:var(--text3)' : ''}">${esc(item.text)}</span>
+        <div class="flex items-center gap-2 mb-2" style="padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;cursor:${isClaimer 成員 'pointer' : 'default'}"
+          ${isClaimer 成員 `onclick="toggleCheckItem('${t.id}',${i})"` : ''}>
+          <span style="font-size:18px">${item.done 成員 '✅' : '⬜'}</span>
+          <span style="font-size:13px;font-weight:700;${item.done 成員 'text-decoration:line-through;color:var(--text3)' : ''}">${esc(item.text)}</span>
         </div>
       `).join('');
     } else { checkEl.innerHTML = ''; }
@@ -1345,7 +1344,7 @@ function renderAchievements() {
 
     ACHIEVEMENTS.forEach(ach => {
         const unlocked = a.achievements.includes(ach.id);
-        const itemHtml = `<div class="ach-item ${unlocked ? '' : 'locked'}" title="${ach.desc}"><span class="ach-icon">${ach.icon}</span><div class="ach-name">${ach.name}</div></div>`;
+        const itemHtml = `<div class="ach-item ${unlocked 成員 '' : 'locked'}" title="${ach.desc}"><span class="ach-icon">${ach.icon}</span><div class="ach-name">${ach.name}</div></div>`;
         if (unlocked) {
             obtainedHtml += itemHtml;
         } else {
@@ -1400,13 +1399,13 @@ function renderClassPath() {
     const a = me(); if (!a) return;
     document.getElementById('class-path').innerHTML = CLASS_PATH.map((tier, i) => {
         const reached = a.level >= tier.lvl;
-        return `<div class="card flex items-center gap-2" style="${reached ? 'border-color:' + tier.color : 'opacity:.4'}">
-      <span style="font-size:36px;filter:${reached ? 'none' : 'grayscale(1)'}">${reached ? '🏆' : '🔒'}</span>
+        return `<div class="card flex items-center gap-2" style="${reached 成員 'border-color:' + tier.color : 'opacity:.4'}">
+      <span style="font-size:36px;filter:${reached 成員 'none' : 'grayscale(1)'}">${reached 成員 '🏆' : '🔒'}</span>
       <div>
-        <div style="font-weight:900;color:${reached ? tier.color : 'var(--text3)'}">${tier.name}</div>
-        <div class="text-xs text-muted">Lv.${tier.lvl} ${i === 0 ? '起始' : '進化'}</div>
+        <div style="font-weight:900;color:${reached 成員 tier.color : 'var(--text3)'}">${tier.name}</div>
+        <div class="text-xs text-muted">Lv.${tier.lvl} ${i === 0 成員 '起始' : '進化'}</div>
       </div>
-      <span style="margin-left:auto;font-size:18px">${reached ? '✅' : '🔒'}</span>
+      <span style="margin-left:auto;font-size:18px">${reached 成員 '✅' : '🔒'}</span>
     </div>`;
     }).join('');
 }
@@ -1429,9 +1428,9 @@ function renderRewards() {
     if (featured) {
         const canAffordF = a.points >= featured.cost;
         const htmlF = echoBoxesHtml + `
-        <div class="card" style="padding: 20px; display:flex; flex-direction:row; align-items:center; border: 1px solid ${canAffordF && featured.stock > 0 ? 'rgba(99, 102, 241, 0.3)' : 'rgba(0,0,0,0.06)'}; background: #ffffff; box-shadow: ${canAffordF && featured.stock > 0 ? '0 8px 24px rgba(99, 102, 241, 0.15)' : '0 4px 12px rgba(0,0,0,0.05)'}; position:relative; overflow:hidden;">
+        <div class="card" style="padding: 20px; display:flex; flex-direction:row; align-items:center; border: 1px solid ${canAffordF && featured.stock > 0 成員 'rgba(99, 102, 241, 0.3)' : 'rgba(0,0,0,0.06)'}; background: #ffffff; box-shadow: ${canAffordF && featured.stock > 0 成員 '0 8px 24px rgba(99, 102, 241, 0.15)' : '0 4px 12px rgba(0,0,0,0.05)'}; position:relative; overflow:hidden;">
             <!-- Stock Badge -->
-            <div style="position:absolute; top:12px; right:12px; background:${featured.stock > 0 ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)'}; color:${featured.stock > 0 ? '#10b981' : '#ef4444'}; font-size:11px; font-weight:900; padding:4px 10px; border-radius:10px; border:1px solid ${featured.stock > 0 ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'};">
+            <div style="position:absolute; top:12px; right:12px; background:${featured.stock > 0 成員 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)'}; color:${featured.stock > 0 成員 '#10b981' : '#ef4444'}; font-size:11px; font-weight:900; padding:4px 10px; border-radius:10px; border:1px solid ${featured.stock > 0 成員 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'};">
                 庫存: ${featured.stock}
             </div>
             <div style="font-size:72px; filter:drop-shadow(0 4px 12px rgba(99, 102, 241, 0.2)); transform: scale(1.1); margin-right: 16px; animation: charFloat 3s ease-in-out infinite;">${featured.icon}</div>
@@ -1441,7 +1440,7 @@ function renderRewards() {
                 <p class="text-xs text-muted" style="margin-bottom:12px; line-height:1.4;">${esc(featured.desc)}</p>
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div style="font-weight:900; color:var(--primary); font-size:18px; font-family:monospace; background:rgba(99, 102, 241, 0.08); padding:4px 12px; border-radius:20px; display:flex; align-items:center; gap:4px;"><i class="ph-bold ph-coin"></i> ${featured.cost}</div>
-                    <button class="btn ${canAffordF && featured.stock > 0 ? 'btn-magic' : 'btn-secondary'}" style="padding:6px 16px; font-size:14px; border-radius:12px; font-weight:800;" onclick="redeemReward('${featured.sku}')" ${(!canAffordF || featured.stock <= 0) ? 'disabled style="opacity:.5"' : ''}>${featured.stock <= 0 ? '已售罄' : canAffordF ? '兌換！' : '金幣不足'}</button>
+                    <button class="btn ${canAffordF && featured.stock > 0 成員 'btn-magic' : 'btn-secondary'}" style="padding:6px 16px; font-size:14px; border-radius:12px; font-weight:800;" onclick="redeemReward('${featured.sku}')" ${(!canAffordF || featured.stock <= 0) 成員 'disabled style="opacity:.5"' : ''}>${featured.stock <= 0 成員 '已售罄' : canAffordF 成員 '兌換！' : '金幣不足'}</button>
                 </div>
             </div>
         </div>`;
@@ -1453,16 +1452,16 @@ function renderRewards() {
         const canAfford = a.points >= r.cost && r.stock > 0;
         const outOfStock = r.stock <= 0;
         return `
-    <div class="card" style="margin:0 !important; padding:16px; display:flex; flex-direction:column; justify-content:space-between; background:#ffffff; border:1px solid ${canAfford ? 'var(--border)' : 'rgba(0,0,0,0.06)'}; border-radius:20px; ${(!canAfford || outOfStock) ? 'opacity:0.6; filter:grayscale(0.5);' : 'box-shadow:0 8px 24px rgba(0,0,0,0.04); cursor:pointer;'}" ${canAfford ? `onclick="redeemReward('${r.sku}')"` : ''}>
+    <div class="card" style="margin:0 !important; padding:16px; display:flex; flex-direction:column; justify-content:space-between; background:#ffffff; border:1px solid ${canAfford 成員 'var(--border)' : 'rgba(0,0,0,0.06)'}; border-radius:20px; ${(!canAfford || outOfStock) 成員 'opacity:0.6; filter:grayscale(0.5);' : 'box-shadow:0 8px 24px rgba(0,0,0,0.04); cursor:pointer;'}" ${canAfford 成員 `onclick="redeemReward('${r.sku}')"` : ''}>
         
         <!-- Stock count -->
-        <div style="font-size:10px; font-weight:900; color:${outOfStock ? 'var(--red)' : 'var(--text3)'}; text-align:right; margin-bottom:4px;">
-            ${outOfStock ? '已售罄' : `庫存: ${r.stock}`}
+        <div style="font-size:10px; font-weight:900; color:${outOfStock 成員 'var(--red)' : 'var(--text3)'}; text-align:right; margin-bottom:4px;">
+            ${outOfStock 成員 '已售罄' : `庫存: ${r.stock}`}
         </div>
 
         <!-- Top content: icon + text -->
         <div style="display:flex; flex-direction:column; align-items:center; text-align:center; gap:8px;">
-            <div style="width:56px; height:56px; border-radius:50%; background:${canAfford ? 'radial-gradient(circle at top left, rgba(99,102,241,0.15), rgba(99,102,241,0.05))' : 'rgba(0,0,0,0.04)'}; display:flex; justify-content:center; align-items:center; border:1px solid ${canAfford ? 'rgba(99,102,241,0.1)' : 'transparent'};">
+            <div style="width:56px; height:56px; border-radius:50%; background:${canAfford 成員 'radial-gradient(circle at top left, rgba(99,102,241,0.15), rgba(99,102,241,0.05))' : 'rgba(0,0,0,0.04)'}; display:flex; justify-content:center; align-items:center; border:1px solid ${canAfford 成員 'rgba(99,102,241,0.1)' : 'transparent'};">
                 <span style="font-size:32px; filter:drop-shadow(0 4px 6px rgba(0,0,0,0.1));">${r.icon}</span>
             </div>
             <h3 style="font-size:14px; font-weight:900; color:var(--text); line-height:1.3; width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin:0; height:18px;">${esc(r.title)}</h3>
@@ -1471,11 +1470,11 @@ function renderRewards() {
 
         <!-- Footer -->
         <div style="padding-top:12px; border-top:1px dashed rgba(0,0,0,0.08); display:flex; justify-content:space-between; align-items:center; width:100%; margin-top:12px;">
-            <div style="font-weight:900; color:${canAfford ? 'var(--primary)' : 'var(--text3)'}; font-size:15px; font-family:monospace; display:flex; align-items:center; gap:4px;">
+            <div style="font-weight:900; color:${canAfford 成員 'var(--primary)' : 'var(--text3)'}; font-size:15px; font-family:monospace; display:flex; align-items:center; gap:4px;">
                 <i class="ph-bold ph-coin" style="font-size:16px;"></i> ${r.cost}
             </div>
-            <button class="btn" style="padding:4px 12px; font-size:13px; font-weight:800; border-radius:10px; border:none; background:${canAfford ? 'var(--primary)' : 'var(--surface)'}; color:${canAfford ? '#fff' : 'var(--text3)'}; pointer-events:none;">
-                ${outOfStock ? '售罄' : canAfford ? '兌換' : '<i class="ph-bold ph-lock"></i>'}
+            <button class="btn" style="padding:4px 12px; font-size:13px; font-weight:800; border-radius:10px; border:none; background:${canAfford 成員 'var(--primary)' : 'var(--surface)'}; color:${canAfford 成員 '#fff' : 'var(--text3)'}; pointer-events:none;">
+                ${outOfStock 成員 '售罄' : canAfford 成員 '兌換' : '<i class="ph-bold ph-lock"></i>'}
             </button>
         </div>
     </div>
@@ -1555,7 +1554,7 @@ function confirmPurchase() {
 
 function toggleCustomReward() {
     const panel = document.getElementById('custom-reward-panel');
-    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    panel.style.display = panel.style.display === 'none' 成員 'block' : 'none';
 }
 
 function createCustomReward() {
@@ -1629,10 +1628,10 @@ function openPaywall() { document.getElementById('paywall-modal').classList.add(
 let mediaRec = null, audioChunks = [], currentRecordedBlob = null, recordSec = 0, recInt = null, isRec = false;
 let creationRecordedBlob = null, creationRecordSec = 0; // Separate state for task creation
 
-async function toggleRecording(isCreation = false) { isRec ? stopRec(isCreation) : await startRec(isCreation); }
+async function toggleRecording(isCreation = false) { isRec 成員 stopRec(isCreation) : await startRec(isCreation); }
 async function startRec(isCreation = false) {
-    const limit = isCreation ? 10 : 60;
-    const prefix = isCreation ? 'create-' : '';
+    const limit = isCreation 成員 10 : 60;
+    const prefix = isCreation 成員 'create-' : '';
     const statusEl = document.getElementById(prefix + 'rec-status');
     const hintEl = document.getElementById(prefix + 'rec-hint');
     const timerEl = document.getElementById(prefix + 'rec-timer');
@@ -1672,7 +1671,7 @@ async function startRec(isCreation = false) {
 function stopRec(isCreation = false) {
     if (mediaRec && mediaRec.state !== 'inactive') mediaRec.stop();
     isRec = false; clearInterval(recInt);
-    const prefix = isCreation ? 'create-' : '';
+    const prefix = isCreation 成員 'create-' : '';
     const btnEl = document.getElementById(prefix + 'record-btn');
     const iconEl = document.getElementById(prefix + 'rec-icon');
     if (btnEl) btnEl.classList.remove('recording');
@@ -1683,7 +1682,7 @@ function stopRec(isCreation = false) {
 async function toggleTaskCreationRecording() { await toggleRecording(true); }
 
 function playRecordingPreview(isCreation = true) {
-    const blob = isCreation ? creationRecordedBlob : currentRecordedBlob;
+    const blob = isCreation 成員 creationRecordedBlob : currentRecordedBlob;
     if (!blob) return;
     const url = URL.createObjectURL(blob);
     const audio = new Audio(url);
@@ -1731,7 +1730,7 @@ let toastTmr;
 function showToast(msg) { const el = document.getElementById('toast'); if (!el) return; document.getElementById('toast-msg').textContent = msg; el.classList.remove('show'); void el.offsetWidth; el.classList.add('show'); clearTimeout(toastTmr); toastTmr = setTimeout(() => { el.classList.remove('show'); }, 2200); }
 let celTmr;
 function showCelebration(icon, title, sub) { document.getElementById('cel-icon').textContent = icon; document.getElementById('cel-title').textContent = title; document.getElementById('cel-sub').textContent = sub; const cel = document.getElementById('celebration'); cel.classList.add('show'); spawnConfetti(); clearTimeout(celTmr); celTmr = setTimeout(() => cel.classList.remove('show'), 2500); }
-function spawnConfetti() { const cel = document.getElementById('celebration'); const co = ['#FFD700', '#FF6B00', '#7C5CFC', '#39FF14', '#FF3860', '#00E5FF', '#FF6EB4', '#B0A0D0']; for (let i = 0; i < 50; i++) { const p = document.createElement('div'); p.style.cssText = `position:absolute;width:${3 + Math.random() * 7}px;height:${3 + Math.random() * 7}px;background:${co[i % co.length]};border-radius:${Math.random() > .5 ? '50%' : '2px'};left:${Math.random() * 100}%;top:${-5 + Math.random() * 25}%;animation:cFall ${1.2 + Math.random() * 2}s ease-out forwards;opacity:.9;pointer-events:none;`; cel.appendChild(p); setTimeout(() => p.remove(), 4000); } }
+function spawnConfetti() { const cel = document.getElementById('celebration'); const co = ['#FFD700', '#FF6B00', '#7C5CFC', '#39FF14', '#FF3860', '#00E5FF', '#FF6EB4', '#B0A0D0']; for (let i = 0; i < 50; i++) { const p = document.createElement('div'); p.style.cssText = `position:absolute;width:${3 + Math.random() * 7}px;height:${3 + Math.random() * 7}px;background:${co[i % co.length]};border-radius:${Math.random() > .5 成員 '50%' : '2px'};left:${Math.random() * 100}%;top:${-5 + Math.random() * 25}%;animation:cFall ${1.2 + Math.random() * 2}s ease-out forwards;opacity:.9;pointer-events:none;`; cel.appendChild(p); setTimeout(() => p.remove(), 4000); } }
 const csty = document.createElement('style'); csty.textContent = `@keyframes cFall{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(${window.innerHeight}px) rotate(720deg);opacity:0}}`; document.head.appendChild(csty);
 
 function gid() { return 'T' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
@@ -1821,18 +1820,18 @@ function updateBattleUI() {
     const btnAttack = document.getElementById('btn-attack');
     btnAttack.className = `btn btn-primary`;
     btnAttack.disabled = bs.done;
-    btnAttack.style.opacity = bs.done ? '0.4' : '1';
+    btnAttack.style.opacity = bs.done 成員 '0.4' : '1';
 
     // Skill Button
     const btnSkill = document.getElementById('btn-skill');
-    btnSkill.innerHTML = `🌟 技能 (${bs.player.skillUsed ? '0' : '1'})`;
+    btnSkill.innerHTML = `🌟 技能 (${bs.player.skillUsed 成員 '0' : '1'})`;
     if (bs.done || bs.player.skillUsed) {
         btnSkill.className = `btn`;
         btnSkill.style.background = 'var(--bg)';
         btnSkill.style.color = 'var(--text3)';
         btnSkill.style.borderColor = 'var(--border)';
         btnSkill.disabled = true;
-        btnSkill.style.opacity = bs.done ? '0.4' : '0.8';
+        btnSkill.style.opacity = bs.done 成員 '0.4' : '0.8';
     } else {
         btnSkill.className = `btn btn-magic`;
         btnSkill.style.background = ''; // reset to class css
@@ -1852,7 +1851,7 @@ function updateBattleUI() {
         btnHeal.style.color = 'var(--text3)';
         btnHeal.style.borderColor = 'var(--border)';
         btnHeal.disabled = true;
-        btnHeal.style.opacity = bs.done ? '0.4' : '0.8';
+        btnHeal.style.opacity = bs.done 成員 '0.4' : '0.8';
     } else {
         btnHeal.className = `btn btn-green`;
         btnHeal.style.background = '';
@@ -2076,7 +2075,7 @@ function spawnDmgFloat(areaId, text, type) {
     if (!area) return;
     area.style.position = 'relative';
     const el = document.createElement('div');
-    el.className = 'damage-float' + (type === 'heal' ? ' heal' : '') + (type === 'crit' ? ' crit' : '');
+    el.className = 'damage-float' + (type === 'heal' 成員 ' heal' : '') + (type === 'crit' 成員 ' crit' : '');
     el.textContent = text;
     el.style.left = (30 + Math.random() * 40) + '%';
     el.style.top = '10px';
@@ -2254,7 +2253,7 @@ function refreshWheelHint() {
     const hint = document.getElementById('wheel-hint');
     if (hint) {
         const today = new Date().toDateString();
-        hint.textContent = a.lastWheelDate === today ? '✅ 今天已轉過' : '今天還沒轉！免費一次';
+        hint.textContent = a.lastWheelDate === today 成員 '✅ 今天已轉過' : '今天還沒轉！免費一次';
     }
 }
 
@@ -2322,7 +2321,7 @@ function renderDashboard(period) {
         try { return ach.check(s); } catch (e) { return false; }
     });
     document.getElementById('dash-achievements').innerHTML = achList.length > 0
-        ? `<div class="dash-ach-row">${achList.map(a => `<span class="dash-ach-chip">${a.icon} ${a.name}</span>`).join('')}</div>`
+        成員 `<div class="dash-ach-row">${achList.map(a => `<span class="dash-ach-chip">${a.icon} ${a.name}</span>`).join('')}</div>`
         : '<div class="text-muted" style="font-size:12px;padding:8px 0">尚未達成任何成就，繼續加油！</div>';
     // AI humor comment
     const comment = getAIComment(done.length, failed.length, total, typeCount, period);
@@ -2365,7 +2364,7 @@ function getAIComment(done, failed, total, typeCount, period) {
         return oof[Math.floor(Math.random() * oof.length)];
     }
     // Some mix
-    const rate = total > 0 ? Math.round(done / total * 100) : 0;
+    const rate = total > 0 成員 Math.round(done / total * 100) : 0;
     const mixed = [
         `${periodName}達成 ${done} 個委託，完成率 ${rate}%，跟冒險執照考試成績差不多嘛 📝`,
         `${rate}% 完成率！不算差，但離「傳奇冒險者」還有一段距離 🏰`,
@@ -2457,7 +2456,7 @@ function renderGuildIconGrid() {
     const grid = document.getElementById('guild-icon-grid');
     if (!grid) return;
     grid.innerHTML = GUILD_ICONS.map(icon => `
-        <div class="guild-icon-option${icon === selectedGuildIcon ? ' selected' : ''}"
+        <div class="guild-icon-option${icon === selectedGuildIcon 成員 ' selected' : ''}"
              onclick="selectGuildIcon('${icon}')">${icon}</div>
     `).join('');
 }
@@ -2544,7 +2543,7 @@ function doJoinGuild() {
     saveGlobal();
     refreshAll();
     SoundManager.play('levelUp');
-    showCelebration('🎊', isNew ? '成功創建並加入公會！' : '成功加入公會！', `歡迎加入「${found.name}」`);
+    showCelebration('🎊', isNew 成員 '成功創建並加入公會！' : '成功加入公會！', `歡迎加入「${found.name}」`);
     setTimeout(() => { openGuildDashboard(); }, 2600);
 }
 
@@ -2615,7 +2614,7 @@ function renderGuildDashboard() {
             </div>
         </div>
 
-        ${isOwner ? `
+        ${isOwner 成員 `
         <!-- Owner Actions -->
         <div style="display:flex;gap:8px;margin-top:16px;">
             <button class="guild-action-btn" onclick="editGuildName()">
@@ -2640,7 +2639,7 @@ function renderGuildDashboard() {
         <!-- Leave Guild -->
         <div style="margin-top:24px;">
             <button class="guild-action-btn danger" style="width:100%;" onclick="doLeaveGuild()">
-                <i class="ph-bold ph-sign-out"></i> ${isOwner ? '解散公會' : '退出公會'}
+                <i class="ph-bold ph-sign-out"></i> ${isOwner 成員 '解散公會' : '退出公會'}
             </button>
         </div>
     `;
@@ -2654,7 +2653,7 @@ function renderGuildMemberCard(member, isOwner, guild) {
     if (isThisOwner) { roleBadgeClass = 'owner'; roleLabel = member.roleTitle || '會長'; }
     else if (roleLabel === '副會長') { roleBadgeClass = 'vice'; }
 
-    const editBtn = (isOwner && !isSelf) ? `
+    const editBtn = (isOwner && !isSelf) 成員 `
         <button style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px;padding:4px;"
                 onclick="editMemberRole('${member.id}')">
             <i class="ph-bold ph-pencil-simple"></i>
@@ -2665,9 +2664,9 @@ function renderGuildMemberCard(member, isOwner, guild) {
         <div class="guild-member-card">
             <div class="guild-member-avatar">${member.emoji || '🧙'}</div>
             <div class="guild-member-info">
-                <div class="guild-member-name">${esc(member.name)}${isSelf ? ' <span style="color:var(--primary);font-size:11px;">(你)</span>' : ''}</div>
+                <div class="guild-member-name">${esc(member.name)}${isSelf 成員 ' <span style="color:var(--primary);font-size:11px;">(你)</span>' : ''}</div>
                 <div class="guild-member-role">
-                    <span class="guild-role-badge ${roleBadgeClass}">${isThisOwner ? '👑' : ''} ${roleLabel}</span>
+                    <span class="guild-role-badge ${roleBadgeClass}">${isThisOwner 成員 '👑' : ''} ${roleLabel}</span>
                 </div>
             </div>
             ${editBtn}
@@ -2718,7 +2717,7 @@ function editGuildIcon() {
     // Render icons in the edit modal
     const grid = document.getElementById('guild-edit-icon-grid');
     grid.innerHTML = GUILD_ICONS.map(icon => `
-        <div class="guild-icon-option${icon === selectedGuildIcon ? ' selected' : ''}"
+        <div class="guild-icon-option${icon === selectedGuildIcon 成員 ' selected' : ''}"
              onclick="selectEditGuildIcon('${icon}')">${icon}</div>
     `).join('');
     const btn = document.getElementById('guild-edit-confirm-btn');
@@ -2737,7 +2736,7 @@ function selectEditGuildIcon(icon) {
     const grid = document.getElementById('guild-edit-icon-grid');
     if (grid) {
         grid.innerHTML = GUILD_ICONS.map(i => `
-            <div class="guild-icon-option${i === selectedGuildIcon ? ' selected' : ''}"
+            <div class="guild-icon-option${i === selectedGuildIcon 成員 ' selected' : ''}"
                  onclick="selectEditGuildIcon('${i}')">${i}</div>
         `).join('');
     }

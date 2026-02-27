@@ -1,5 +1,5 @@
-/*
-  ECHO �^�n v3 �X Kid RPG Game UI
+﻿/*
+  ECHO 回聲 v3 — Kid RPG Game UI
   Enhanced: idle anims, battle FX, lucky wheel, Google auth
 */
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Noto+Sans+TC:wght@500;700;900&display=swap');
@@ -746,7 +746,7 @@ body::before {
     opacity: 1
 }
 
-/* Character IDLE animation �X subtle breathing+bob */
+/* Character IDLE animation — subtle breathing+bob */
 @keyframes charIdle {
 
     0%,
@@ -813,114 +813,50 @@ body::before {
     font-weight: 800
 }
 
-/* RPG HERO UI REDESIGN */
+/* CHARACTER PROFILE REDESIGN */
 .char-profile {
     text-align: center;
-    padding: 0;
-    background: var(--bg);
-    overflow: hidden;
-    position: relative;
+    padding: 32px 16px;
+    background: radial-gradient(circle at top, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
     border-bottom: 1px solid var(--border);
 }
 
-.char-hero-section {
+.char-profile-avatar-container {
     position: relative;
-    width: 100%;
-    height: 340px;
-    background: radial-gradient(circle at center 70%, rgba(99, 102, 241, 0.1) 0%, transparent 80%),
-                linear-gradient(to bottom, transparent 80%, rgba(0,0,0,0.05));
+    width: 140px;
+    height: 140px;
+    margin: 0 auto 16px;
+}
+
+.char-profile-avatar {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    margin: 5px;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: flex-end;
-    overflow: visible;
-    padding-bottom: 60px; /* Lifts the character up */
-    border-top-left-radius: 24px;
-    border-top-right-radius: 24px;
-}
-
-.char-hero-glow {
-    position: absolute;
-    bottom: 80px;
-    width: 280px;
-    height: 280px;
-    background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
-    filter: blur(50px);
-    opacity: 0.15;
-    z-index: 1;
-    animation: pulseGlow 4s ease-in-out infinite;
-    pointer-events: none;
-}
-
-@keyframes pulseGlow {
-
-    0%,
-    100% {
-        transform: scale(1);
-        opacity: 0.15;
-    }
-
-    50% {
-        transform: scale(1.1);
-        opacity: 0.25;
-    }
-}
-
-.char-hero-platform {
-    position: absolute;
-    bottom: 45px; /* Aligned with lifted padding */
-    width: 200px;
-    height: 60px;
-    background: radial-gradient(ellipse at center, rgba(99, 102, 241, 0.2) 0%, transparent 70%);
-    border-bottom: 2px solid rgba(99, 102, 241, 0.1);
-    transform: rotateX(60deg);
-    z-index: 2;
-    pointer-events: none;
-}
-
-.char-hero-image-container {
+    justify-content: center;
+    background: var(--bg);
     position: relative;
-    z-index: 3;
+    z-index: 2;
+    overflow: hidden;
+    border: 4px solid #fff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.char-profile-avatar img {
     width: 100%;
     height: 100%;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    cursor: pointer;
-}
-
-.char-hero-image {
-    max-width: 85%;
-    max-height: 280px;
-    width: auto;
-    height: auto;
     object-fit: contain;
-    filter: drop-shadow(0 15px 30px rgba(0,0,0,0.3));
-    transition: transform 0.3s ease;
-    z-index: 5;
-    position: relative;
-    user-select: none;
 }
 
-.char-hero-image-container:active .char-hero-image {
-    max-width: 85%;
-    max-height: 280px;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-    filter: drop-shadow(0 15px 30px rgba(0,0,0,0.3));
-    transition: transform 0.3s ease;
-    z-index: 5;
-    position: relative;
-    user-select: none;
-}
-
+/* v1.001 Consolidated Avatar Edit Badge */
 .avatar-edit-badge {
     position: absolute;
-    bottom: 50px;
-    right: 25%;
-    width: 44px;
-    height: 44px;
+    bottom: 5px;
+    right: 5px;
+    width: 36px;
+    height: 36px;
     background: var(--primary);
     color: white;
     border: 3px solid #FFFFFF;
@@ -928,14 +864,46 @@ body::before {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    font-size: 18px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     z-index: 10;
     transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.char-hero-section .char-dialogue-bubble {
-    z-index: 20;
+.char-profile-avatar-container:active .avatar-edit-badge {
+    transform: scale(0.9) rotate(5deg);
+}
+
+.char-profile-avatar .char-big {
+    font-size: 80px;
+}
+
+/* v1.001 Consolidated Avatar Edit Badge */
+.avatar-edit-badge {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 36px;
+    height: 36px;
+    background: var(--primary);
+    color: white;
+    border: 3px solid #FFFFFF;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.char-profile-avatar-container:active .avatar-edit-badge {
+    transform: scale(0.9) rotate(5deg);
+}
+
+.avatar-edit-badge i {
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.1));
 }
 
 /* Dual-Neon Glow Ring */
@@ -1750,7 +1718,7 @@ select:focus {
     }
 }
 
-/* ===== BATTLE ARENA �X ENHANCED ===== */
+/* ===== BATTLE ARENA — ENHANCED ===== */
 .battle-arena {
     flex: 1;
     display: flex;
@@ -2295,7 +2263,7 @@ select:focus {
     color: var(--primary)
 }
 
-/* ===== TOAST (was missing �X root cause of stuck toast!) ===== */
+/* ===== TOAST (was missing — root cause of stuck toast!) ===== */
 .toast {
     position: fixed;
     top: 0;
@@ -2396,7 +2364,7 @@ select:focus {
     }
 }
 
-/* ===== UX IMPROVEMENTS �X COMPREHENSIVE POLISH ===== */
+/* ===== UX IMPROVEMENTS — COMPREHENSIVE POLISH ===== */
 
 /* Bigger XP bar for better progress visibility */
 .xp-track {
@@ -2435,7 +2403,7 @@ select:focus {
     box-shadow: 0 2px 8px rgba(0, 0, 0, .3) !important
 }
 
-/* Publisher badge in task cards �X more prominent */
+/* Publisher badge in task cards — more prominent */
 .task-creator {
     display: inline-flex;
     align-items: center;
@@ -2463,7 +2431,7 @@ select:focus {
     position: relative
 }
 
-/* Reward cost badge �X larger and more visible */
+/* Reward cost badge — larger and more visible */
 .reward-cost {
     font-size: 14px !important;
     font-weight: 900 !important;
@@ -2501,12 +2469,12 @@ select:focus {
     transform: scale(.99)
 }
 
-/* HUD chips �X better visual weight */
+/* HUD chips — better visual weight */
 .hud-chip {
     backdrop-filter: blur(8px)
 }
 
-/* Profile stats �X add subtle separators */
+/* Profile stats — add subtle separators */
 .profile-stats {
     position: relative
 }
@@ -2525,17 +2493,17 @@ select:focus {
     background: rgba(255, 255, 255, .1)
 }
 
-/* Battle arena �X better visual hierarchy */
+/* Battle arena — better visual hierarchy */
 .battle-arena {
     padding: 16px !important
 }
 
-/* Lucky wheel canvas �X add glow */
+/* Lucky wheel canvas — add glow */
 #wheel-canvas {
     filter: drop-shadow(0 0 20px rgba(255, 215, 0, .15))
 }
 
-/* ===== CHARACTER SELECTION �X ANIMATED FEEL ===== */
+/* ===== CHARACTER SELECTION — ANIMATED FEEL ===== */
 .char-option {
     transition: transform .2s ease, box-shadow .2s ease
 }
@@ -2678,7 +2646,7 @@ select:focus {
     }
 }
 
-/* HUD character icon �X subtle pulse */
+/* HUD character icon — subtle pulse */
 .hud-chip img {
     animation: hudCharPulse 4s ease-in-out infinite
 }
@@ -2763,7 +2731,7 @@ select:focus {
     }
 }
 
-/* HUD character icon �X subtle pulse */
+/* HUD character icon — subtle pulse */
 .hud-chip img {
     animation: hudCharPulse 4s ease-in-out infinite
 }

@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/regular/style.css">
     <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/bold/style.css">
     <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/fill/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2成員family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <!-- Background Removal Utility -->
     <script src="https://unpkg.com/@imgly/background-removal@1.4.3/dist/browser/background-removal.js"></script>
@@ -612,24 +612,22 @@
                 </div>
             </div>
             <div class="char-profile">
-                <!-- RPG Hero Section -->
-                <div class="char-hero-section">
-                    <div class="char-hero-glow"></div>
-                    <div class="char-hero-platform"></div>
-                    <div class="char-hero-image-container"
-                        onclick="document.getElementById('avatar-input-profile').click()">
-                        <div id="prof-hero-render-target">
-                            <!-- Hero image will be injected here -->
-                        </div>
-                        <div class="avatar-edit-badge">
-                            <i class="ph-fill ph-camera"></i>
-                        </div>
+                <div class="char-profile-avatar-container"
+                    onclick="document.getElementById('avatar-input-profile').click()">
+                    <div class="avatar-neon-glow"></div>
+                    <div class="avatar-neon-ring"></div>
+                    <div class="char-profile-avatar" id="prof-char-avatar">
+                        <span class="char-big" id="prof-char">🧙</span>
                     </div>
-                    <div class="char-dialogue-bubble" id="prof-char-bubble"
-                        style="top:40px; left:50%; transform:translateX(-50%); max-width: 250px;">
+                    <!-- Single consolidated trigger: bottom-right camera overlay -->
+                    <div class="avatar-edit-badge">
+                        <i class="ph-fill ph-camera"></i>
                     </div>
                 </div>
 
+                <div class="char-dialogue-bubble" id="prof-char-bubble"
+                    style="top:10px; left:50%; transform:translateX(-50%) translateY(10px) scale(0.95); max-width: 250px;">
+                </div>
                 <div class="char-title" id="prof-name">冒險者</div>
                 <div class="char-subtitle" id="prof-classname">見習冒險者</div>
                 <div class="char-class-badge" id="prof-class-badge">⭐ Lv.1 見習冒險者</div>
